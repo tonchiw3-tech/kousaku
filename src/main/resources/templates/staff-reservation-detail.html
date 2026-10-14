@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>予約詳細 | KOSAKU</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/staff.css">
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="/">KOSAKU <small>INIMU</small></a><span class="header-note">スタッフ予約管理</span></header>
+  <main class="app-shell"><section class="section-heading"><p class="eyebrow">RESERVATION DETAIL</p><h1>予約詳細</h1><p>予約内容を確認できます。</p></section>
+    <section class="detail-panel reservation-detail-card"><dl id="reservation-detail"><div class="no-data">読み込み中…</div></dl>
+      <div class="status-change"><h2>ステータス変更</h2><label for="status-select">新しいステータス</label>
+        <select id="status-select"><option value="RECEIVED">受付済み</option><option value="CONFIRMED">予約確定</option><option value="COMPLETED">対応完了</option><option value="CANCELED">キャンセル</option></select>
+        <button id="status-update-button" class="primary-button" type="button">変更する</button><p id="status-message" role="status"></p>
+      </div><a class="secondary-button detail-back" href="/staff/reservations">予約一覧へ戻る</a>
+    </section></main>
+  <script src="/js/staff-reservation-detail.js"></script><script src="/js/staff-reservation-status.js"></script>
+</body></html>

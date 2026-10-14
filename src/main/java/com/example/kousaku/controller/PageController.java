@@ -15,4 +15,7 @@ public class PageController {
 	public String staffReservations() {
 		return "staff";
 	}
+
+	@GetMapping("/staff/reservations/{id}")
+	public String staffReservationDetail() { return "staff-reservation-detail"; }
 }

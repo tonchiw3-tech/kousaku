@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS reservations (
   KEY idx_reservations_schedule (reservation_date, reservation_time),
   CONSTRAINT chk_participants CHECK (participants >= 1),
   CONSTRAINT chk_visit_type CHECK (visit_type IN ('FIRST','REPEAT')),
-  CONSTRAINT chk_status CHECK (status IN ('RECEIVED','CONFIRMED','CANCELED'))
+  CONSTRAINT chk_status CHECK (status IN ('RECEIVED','CONFIRMED','COMPLETED','CANCELED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE reservations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

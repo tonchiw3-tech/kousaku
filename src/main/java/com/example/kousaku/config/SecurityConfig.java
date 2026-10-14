@@ -17,7 +17,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/staff/**").authenticated()
 				.anyRequest().authenticated())
 			.formLogin(formLogin -> formLogin.permitAll())
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/reservations"));
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/reservations", "/api/staff/**"));
 
 		return http.build();
 	}

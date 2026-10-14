@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class ReservationService {
+    public static final java.util.Set<String> VALID_STATUSES = java.util.Set.of("RECEIVED", "CONFIRMED", "COMPLETED", "CANCELED");
     private static final BigDecimal UNIT_PRICE = BigDecimal.valueOf(5500);
     private final ReservationMapper mapper;
 
@@ -20,6 +21,14 @@ public class ReservationService {
 
     public List<Reservation> findAll() {
         return mapper.selectReservations();
+    }
+
+    public Reservation findById(Long id) { return mapper.selectReservationById(id); }
+
+    public Reservation updateStatus(Long id, String status) {
+        if (status == null || !VALID_STATUSES.contains(status)) throw new IllegalArgumentException("status is invalid");
+        if (mapper.updateStatus(id, status) == 0) return null;
+        return mapper.selectReservationById(id);
     }
 
     public ReservationResponse create(ReservationRequest request) {
