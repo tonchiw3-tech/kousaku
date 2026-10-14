@@ -10,4 +10,9 @@ public class PageController {
 	public String index() {
 		return "index";
 	}
+
+	@GetMapping("/staff/reservations")
+	public String staffReservations() {
+		return "staff";
+	}
 }

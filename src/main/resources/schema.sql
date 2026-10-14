@@ -20,3 +20,5 @@ CREATE TABLE IF NOT EXISTS reservations (
   CONSTRAINT chk_visit_type CHECK (visit_type IN ('FIRST','REPEAT')),
   CONSTRAINT chk_status CHECK (status IN ('RECEIVED','CONFIRMED','CANCELED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE reservations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

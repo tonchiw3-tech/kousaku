@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 public class ReservationService {
@@ -16,6 +17,10 @@ public class ReservationService {
     private final ReservationMapper mapper;
 
     public ReservationService(ReservationMapper mapper) { this.mapper = mapper; }
+
+    public List<Reservation> findAll() {
+        return mapper.selectReservations();
+    }
 
     public ReservationResponse create(ReservationRequest request) {
         Reservation reservation = new Reservation();

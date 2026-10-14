@@ -14,6 +14,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/", "/css/**", "/js/**", "/images/**", "/api/reservations").permitAll()
 				.requestMatchers("/staff/**").authenticated()
+				.requestMatchers("/api/staff/**").authenticated()
 				.anyRequest().authenticated())
 			.formLogin(formLogin -> formLogin.permitAll())
 			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/reservations"));
