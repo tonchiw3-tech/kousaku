@@ -9,7 +9,20 @@ function show(id) { document.querySelectorAll('.screen').forEach((screen) => scr
 function formatDate(value) { return value ? new Intl.DateTimeFormat('ja-JP').format(new Date(`${value}T00:00:00`)) : ''; }
 function renderConfirm() { const rows = [['開催日', formatDate(draft.date)], ['時間', `${draft.meet}集合／${draft.experience}`], ['人数', `${draft.guests}名`], ['料金', `${draft.guests * 5500}円（1人5,500円）`], ['お名前', draft.name], ['メールアドレス', draft.email], ['年代', draft.age], ['初回／リピーター', draft.visit], ['知ったきっかけ', draft.source], ['備考', draft.note]]; $('#confirm-content').innerHTML = `<dl>${rows.map(([label, value]) => `<div class="summary-row"><dt>${label}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>`; }
 $('#booking-form').addEventListener('submit', (event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const selectedDate = new Date(`${form.get('date')}T00:00:00`); if ([1, 2, 3, 4, 5].includes(selectedDate.getDay())) return alert('開催日は土・日・祝です。'); const slot = slots[form.get('slot')]; if (!slot) return; draft = { date: form.get('date'), slot: form.get('slot'), meet: slot.meet, experience: slot.experience, guests: Number(form.get('guests')), name: form.get('name').trim(), email: form.get('email').trim(), age: form.get('age'), visit: form.get('visit'), source: form.get('source') || '未回答', note: form.get('note') || '未記入' }; renderConfirm(); show('confirm'); });
-$('#confirm-button').addEventListener('click', () => { if (!draft) return; save([...all(), { ...draft, id: `KS-${Date.now().toString(36).toUpperCase()}`, status: '受付済み', createdAt: new Date().toISOString() }]); draft = null; $('#booking-form').reset(); show('complete'); });
+$('#confirm-button').addEventListener('click', async () => {
+  if (!draft) return;
+  const button = $('#confirm-button');
+  button.disabled = true;
+  const reservationTime = { 1: '11:00', 2: '13:00', 3: '15:00' }[draft.slot];
+  const payload = { reservationDate: draft.date, reservationTime, participants: draft.guests,
+    customerName: draft.name, email: draft.email, ageGroup: draft.age,
+    visitType: draft.visit === '初めて' ? 'FIRST' : 'REPEAT' };
+  try {
+    const response = await fetch('/api/reservations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!response.ok) throw new Error('予約登録に失敗しました');
+    draft = null; $('#booking-form').reset(); show('complete');
+  } catch (error) { alert(error.message); } finally { button.disabled = false; }
+});
 function renderAdmin() { const data = all().sort((a, b) => `${a.date}${a.slot}`.localeCompare(`${b.date}${b.slot}`)); $('#reservation-count').textContent = `${data.length}件`; $('#reservation-list').innerHTML = data.length ? data.map((item) => `<article class="reservation-item"><div><b>${escapeHtml(formatDate(item.date))} ${escapeHtml(item.meet)}集合</b><div class="reservation-sub">${escapeHtml(item.name)}／${item.guests}名／${escapeHtml(item.email)}</div></div><select class="status-select" data-status="${item.id}"><option ${item.status === '受付済み' ? 'selected' : ''}>受付済み</option><option ${item.status === '確認済み' ? 'selected' : ''}>確認済み</option><option ${item.status === 'キャンセル' ? 'selected' : ''}>キャンセル</option></select></article>`).join('') : '<p class="no-data">予約データはありません。</p>'; }
 document.addEventListener('click', (event) => { const button = event.target.closest('[data-screen]'); if (button) { event.preventDefault(); show(button.dataset.screen); } });
 document.addEventListener('change', (event) => { if (!event.target.dataset.status) return; const data = all(); const item = data.find((entry) => entry.id === event.target.dataset.status); if (item) { item.status = event.target.value; save(data); renderAdmin(); } });

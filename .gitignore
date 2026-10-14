@@ -48,3 +48,5 @@ build/
 
 ### VS Code ###
 .vscode/
+!.vscode/
+!.vscode/launch.json

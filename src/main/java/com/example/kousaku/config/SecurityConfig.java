@@ -12,10 +12,11 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll()
+				.requestMatchers("/", "/css/**", "/js/**", "/images/**", "/api/reservations").permitAll()
 				.requestMatchers("/staff/**").authenticated()
 				.anyRequest().authenticated())
-			.formLogin(formLogin -> formLogin.permitAll());
+			.formLogin(formLogin -> formLogin.permitAll())
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/reservations"));
 
 		return http.build();
 	}
