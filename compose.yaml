@@ -3,8 +3,8 @@ services:
     image: mysql:8.0
     container_name: kousaku-db
     environment:
-      MYSQL_DATABASE: kousaku
-      MYSQL_USER: kousaku_user
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
