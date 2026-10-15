@@ -28,3 +28,22 @@ ALTER TABLE reservations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicod
 ALTER TABLE reservations
   DROP CHECK chk_status,
   ADD CONSTRAINT chk_status CHECK (status IN ('RECEIVED','CONFIRMED','READY','COMPLETED','CANCELED'));
+
+CREATE TABLE IF NOT EXISTS inquiries (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  inquiry_number VARCHAR(30) NOT NULL,
+  customer_name VARCHAR(100) NOT NULL,
+  email VARCHAR(254) NOT NULL,
+  category VARCHAR(20) NOT NULL,
+  message TEXT NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'NEW',
+  reply_message TEXT NULL,
+  replied_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_inquiries_number (inquiry_number),
+  KEY idx_inquiries_status_created (status, created_at),
+  CONSTRAINT chk_inquiries_category CHECK (category IN ('PRICE','AVAILABILITY','SOLO','DURATION','ACCESS','RAINY','FRAGRANCE','OTHER')),
+  CONSTRAINT chk_inquiries_status CHECK (status IN ('NEW','IN_PROGRESS','REPLIED'))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
