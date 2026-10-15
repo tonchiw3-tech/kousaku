@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public class ReservationService {
-    public static final java.util.Set<String> VALID_STATUSES = java.util.Set.of("RECEIVED", "CONFIRMED", "COMPLETED", "CANCELED");
+    public static final java.util.Set<String> VALID_STATUSES = java.util.Set.of("RECEIVED", "CONFIRMED", "READY", "COMPLETED", "CANCELED");
     private static final BigDecimal UNIT_PRICE = BigDecimal.valueOf(5500);
     private final ReservationMapper mapper;
 
@@ -30,6 +30,23 @@ public class ReservationService {
         if (mapper.updateStatus(id, status) == 0) return null;
         return mapper.selectReservationById(id);
     }
+
+    public Reservation cancel(Long id) { return updateStatus(id, "CANCELED"); }
+
+    public Reservation revertStatus(Long id) {
+        Reservation current = mapper.selectReservationById(id);
+        if (current == null) return null;
+        String previous = switch (current.getStatus()) {
+            case "COMPLETED" -> "READY";
+            case "READY" -> "CONFIRMED";
+            case "CONFIRMED" -> "RECEIVED";
+            case "RECEIVED", "CANCELED" -> throw new IllegalStateException("status cannot be reverted");
+            default -> throw new IllegalStateException("status cannot be reverted");
+        };
+        return updateStatus(id, previous);
+    }
+
+    public boolean delete(Long id) { return mapper.deleteById(id) > 0; }
 
     public ReservationResponse create(ReservationRequest request) {
         Reservation reservation = new Reservation();

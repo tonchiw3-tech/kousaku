@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Delete;
 import java.util.List;
 
 @Mapper
@@ -26,6 +27,9 @@ public interface ReservationMapper {
     @Update("UPDATE reservations SET status = #{status}, updated_at = CURRENT_TIMESTAMP WHERE id = #{id}")
     int updateStatus(@org.apache.ibatis.annotations.Param("id") Long id,
                      @org.apache.ibatis.annotations.Param("status") String status);
+
+    @Delete("DELETE FROM reservations WHERE id = #{id}")
+    int deleteById(@org.apache.ibatis.annotations.Param("id") Long id);
 
     @Insert("""
         INSERT INTO reservations (reservation_number, reservation_date, reservation_time,
