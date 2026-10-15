@@ -1,13 +1,47 @@
 package com.example.kousaku.service;
-import com.example.kousaku.dto.InquiryRequest; import com.example.kousaku.mapper.InquiryMapper; import com.example.kousaku.model.Inquiry;
-import org.springframework.stereotype.Service; import java.time.LocalDateTime; import java.time.format.DateTimeFormatter; import java.util.*;
-@Service public class InquiryService {
- public static final Set<String> CATEGORIES=Set.of("PRICE","AVAILABILITY","SOLO","DURATION","ACCESS","RAINY","FRAGRANCE","OTHER");
- public static final Set<String> STATUSES=Set.of("NEW","IN_PROGRESS","REPLIED"); private final InquiryMapper mapper;
- public InquiryService(InquiryMapper mapper){this.mapper=mapper;} public List<Inquiry> findAll(){return mapper.findAll();} public Inquiry findById(Long id){return mapper.findById(id);} public Inquiry findByInquiryNumber(String inquiryNumber){if(inquiryNumber==null||inquiryNumber.isBlank())return null;return mapper.findByInquiryNumber(inquiryNumber.trim());}
- public Inquiry findByInquiryNumber(String inquiryNumber){if(inquiryNumber==null||inquiryNumber.isBlank())return null;return mapper.findByInquiryNumber(inquiryNumber.trim());}
- public Inquiry findByInquiryNumber(String inquiryNumber){if(inquiryNumber==null||inquiryNumber.isBlank())return null;return mapper.findByInquiryNumber(inquiryNumber.trim());}
- public Inquiry create(InquiryRequest r){if(!CATEGORIES.contains(r.category()))throw new IllegalArgumentException("category is invalid"); Inquiry i=new Inquiry();i.setInquiryNumber("INQ-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))+"-"+UUID.randomUUID().toString().substring(0,6).toUpperCase());i.setCustomerName(r.customerName().trim());i.setEmail(r.email().trim());i.setCategory(r.category());i.setMessage(r.message().trim());if(mapper.insert(i)!=1||i.getId()==null)throw new IllegalStateException("問い合わせのINSERTに失敗しました");Inquiry saved=mapper.findById(i.getId());if(saved==null)throw new IllegalStateException("INSERT後の問い合わせ取得に失敗しました");return saved;}
- public Inquiry updateStatus(Long id,String status){if(!STATUSES.contains(status))throw new IllegalArgumentException("status is invalid");Inquiry current=mapper.findById(id);if(current==null)return null;if(!(("NEW".equals(current.getStatus())&&"IN_PROGRESS".equals(status))))throw new IllegalArgumentException("status transition is invalid");if(mapper.updateStatus(id,status)==0)return null;return mapper.findById(id);}
- public Inquiry reply(Long id,String message){if(message==null||message.isBlank())throw new IllegalArgumentException("replyMessage is required");Inquiry current=mapper.findById(id);if(current==null)return null;if(!"IN_PROGRESS".equals(current.getStatus()))throw new IllegalArgumentException("reply is allowed only while in progress");if(mapper.updateReply(id,message.trim())==0)return null;return mapper.findById(id);}
+
+import com.example.kousaku.dto.InquiryRequest;
+import com.example.kousaku.mapper.InquiryMapper;
+import com.example.kousaku.model.Inquiry;
+import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+@Service
+public class InquiryService {
+    public static final Set<String> CATEGORIES = Set.of("PRICE", "AVAILABILITY", "SOLO", "DURATION", "ACCESS", "RAINY", "FRAGRANCE", "OTHER");
+    public static final Set<String> STATUSES = Set.of("NEW", "IN_PROGRESS", "REPLIED");
+    private final InquiryMapper mapper;
+    public InquiryService(InquiryMapper mapper) { this.mapper = mapper; }
+    public List<Inquiry> findAll() { return mapper.findAll(); }
+    public Inquiry findById(Long id) { return mapper.findById(id); }
+    public Inquiry findByInquiryNumber(String inquiryNumber) {
+        if (inquiryNumber == null || inquiryNumber.isBlank()) return null;
+        return mapper.findByInquiryNumber(inquiryNumber.trim());
+    }
+    public Inquiry create(InquiryRequest r) {
+        if (!CATEGORIES.contains(r.category())) throw new IllegalArgumentException("category is invalid");
+        Inquiry i = new Inquiry();
+        i.setInquiryNumber("INQ-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase());
+        i.setCustomerName(r.customerName().trim()); i.setEmail(r.email().trim()); i.setCategory(r.category()); i.setMessage(r.message().trim());
+        if (mapper.insert(i) != 1 || i.getId() == null) throw new IllegalStateException("問い合わせの保存に失敗しました");
+        Inquiry saved = mapper.findById(i.getId());
+        if (saved == null) throw new IllegalStateException("保存した問い合わせの取得に失敗しました");
+        return saved;
+    }
+    public Inquiry updateStatus(Long id, String status) {
+        if (!STATUSES.contains(status)) throw new IllegalArgumentException("status is invalid");
+        Inquiry current = mapper.findById(id); if (current == null) return null;
+        if (!("NEW".equals(current.getStatus()) && "IN_PROGRESS".equals(status))) throw new IllegalArgumentException("status transition is invalid");
+        if (mapper.updateStatus(id, status) == 0) return null; return mapper.findById(id);
+    }
+    public Inquiry reply(Long id, String message) {
+        if (message == null || message.isBlank()) throw new IllegalArgumentException("replyMessage is required");
+        Inquiry current = mapper.findById(id); if (current == null) return null;
+        if (!"IN_PROGRESS".equals(current.getStatus())) throw new IllegalArgumentException("reply is allowed only while in progress");
+        if (mapper.updateReply(id, message.trim()) == 0) return null; return mapper.findById(id);
+    }
 }

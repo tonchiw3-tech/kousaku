@@ -19,6 +19,12 @@ public class PageController {
 	@GetMapping("/staff/reservations/{id}")
 	public String staffReservationDetail() { return "staff-reservation-detail"; }
 
+	@GetMapping("/staff/calendar")
+	public String staffCalendar() { return "staff-calendar"; }
+
+	@GetMapping("/staff/calendar/{date}")
+	public String staffCalendarDay() { return "staff-calendar-day"; }
+
 	@GetMapping("/inquiries") public String inquiries() { return "inquiry"; }
 	@GetMapping("/inquiries/status") public String inquiryStatus() { return "inquiry-status"; }
 	@GetMapping("/staff/inquiries") public String staffInquiries() { return "staff-inquiries"; }
