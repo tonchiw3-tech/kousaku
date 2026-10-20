@@ -22,10 +22,13 @@ public class StaffReservationController {
     public Reservation updateStatus(@PathVariable Long id, @RequestBody StatusRequest request) {
         try { Reservation r = service.updateStatus(id, request == null ? null : request.status()); if (r == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND); return r; }
         catch (IllegalArgumentException e) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status is invalid", e); }
+        catch (IllegalStateException e) { throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e); }
     }
     @PatchMapping("/{id}/cancel")
     public Reservation cancel(@PathVariable Long id) {
-        Reservation r = service.cancel(id);
+        Reservation r;
+        try { r = service.cancel(id); }
+        catch (IllegalStateException e) { throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e); }
         if (r == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return r;
     }

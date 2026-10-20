@@ -7,6 +7,8 @@ import com.example.kousaku.model.Reservation;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.List;
@@ -16,8 +18,14 @@ public class ReservationService {
     public static final java.util.Set<String> VALID_STATUSES = java.util.Set.of("RECEIVED", "CONFIRMED", "READY", "COMPLETED", "CANCELED");
     private static final BigDecimal UNIT_PRICE = BigDecimal.valueOf(5500);
     private final ReservationMapper mapper;
+    private final Clock clock;
 
-    public ReservationService(ReservationMapper mapper) { this.mapper = mapper; }
+    public ReservationService(ReservationMapper mapper) { this(mapper, Clock.system(ZoneId.of("Asia/Tokyo"))); }
+
+    public ReservationService(ReservationMapper mapper, Clock clock) {
+        this.mapper = mapper;
+        this.clock = clock;
+    }
 
     public List<Reservation> findAll() {
         return mapper.selectReservations();
@@ -27,11 +35,39 @@ public class ReservationService {
 
     public Reservation updateStatus(Long id, String status) {
         if (status == null || !VALID_STATUSES.contains(status)) throw new IllegalArgumentException("status is invalid");
+        Reservation current = mapper.selectReservationById(id);
+        if (current == null) return null;
+        if ("CANCELED".equals(current.getStatus()) || "COMPLETED".equals(current.getStatus())) {
+            throw new IllegalStateException("status cannot be changed");
+        }
+        String expected = switch (current.getStatus()) {
+            case "RECEIVED" -> "CONFIRMED";
+            case "CONFIRMED" -> "READY";
+            case "READY" -> "COMPLETED";
+            default -> throw new IllegalStateException("status transition is invalid");
+        };
+        if (!expected.equals(status)) throw new IllegalStateException("status transition is invalid");
+        if ("COMPLETED".equals(status) && isBeforeReservationStart(current)) {
+            throw new IllegalStateException("reservation has not started");
+        }
         if (mapper.updateStatus(id, status) == 0) return null;
         return mapper.selectReservationById(id);
     }
 
-    public Reservation cancel(Long id) { return updateStatus(id, "CANCELED"); }
+    private boolean isBeforeReservationStart(Reservation reservation) {
+        LocalDateTime start = LocalDateTime.of(reservation.getReservationDate(), reservation.getReservationTime());
+        return start.isAfter(LocalDateTime.now(clock));
+    }
+
+    public Reservation cancel(Long id) {
+        Reservation current = mapper.selectReservationById(id);
+        if (current == null) return null;
+        if ("CANCELED".equals(current.getStatus()) || "COMPLETED".equals(current.getStatus())) {
+            throw new IllegalStateException("status cannot be canceled");
+        }
+        if (mapper.updateStatus(id, "CANCELED") == 0) return null;
+        return mapper.selectReservationById(id);
+    }
 
     public Reservation revertStatus(Long id) {
         Reservation current = mapper.selectReservationById(id);
@@ -43,7 +79,8 @@ public class ReservationService {
             case "RECEIVED", "CANCELED" -> throw new IllegalStateException("status cannot be reverted");
             default -> throw new IllegalStateException("status cannot be reverted");
         };
-        return updateStatus(id, previous);
+        if (mapper.updateStatus(id, previous) == 0) return null;
+        return mapper.selectReservationById(id);
     }
 
     public boolean delete(Long id) { return mapper.deleteById(id) > 0; }
