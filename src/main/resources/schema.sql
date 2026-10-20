@@ -23,11 +23,18 @@ CREATE TABLE IF NOT EXISTS reservations (
 
 ALTER TABLE reservations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Re-apply the constraint because CREATE TABLE IF NOT EXISTS does not update
--- constraints on an existing reservations table.
-ALTER TABLE reservations
-  DROP CHECK chk_status,
-  ADD CONSTRAINT chk_status CHECK (status IN ('RECEIVED','CONFIRMED','READY','COMPLETED','CANCELED'));
+CREATE TABLE IF NOT EXISTS reservation_status_corrections (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  reservation_id BIGINT NOT NULL,
+  before_status VARCHAR(20) NOT NULL,
+  after_status VARCHAR(20) NOT NULL,
+  changed_at DATETIME NOT NULL,
+  operator_username VARCHAR(100) NOT NULL,
+  reason VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (id),
+  KEY idx_corrections_reservation (reservation_id, changed_at),
+  CONSTRAINT fk_corrections_reservation FOREIGN KEY (reservation_id) REFERENCES reservations(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS inquiries (
   id BIGINT NOT NULL AUTO_INCREMENT,

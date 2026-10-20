@@ -13,19 +13,25 @@ import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+import com.example.kousaku.mapper.ReservationCorrectionMapper;
 
 @Service
 public class ReservationService {
     public static final java.util.Set<String> VALID_STATUSES = java.util.Set.of("RECEIVED", "CONFIRMED", "READY", "COMPLETED", "CANCELED");
     private static final BigDecimal UNIT_PRICE = BigDecimal.valueOf(5500);
     private final ReservationMapper mapper;
+    private final ReservationCorrectionMapper correctionMapper;
     private final Clock clock;
 
     @Autowired
-    public ReservationService(ReservationMapper mapper) { this(mapper, Clock.system(ZoneId.of("Asia/Tokyo"))); }
+    public ReservationService(ReservationMapper mapper, ReservationCorrectionMapper correctionMapper) { this(mapper, correctionMapper, Clock.system(ZoneId.of("Asia/Tokyo"))); }
 
-    public ReservationService(ReservationMapper mapper, Clock clock) {
+    public ReservationService(ReservationMapper mapper, Clock clock) { this(mapper, null, clock); }
+
+    public ReservationService(ReservationMapper mapper, ReservationCorrectionMapper correctionMapper, Clock clock) {
         this.mapper = mapper;
+        this.correctionMapper = correctionMapper;
         this.clock = clock;
     }
 
@@ -42,18 +48,24 @@ public class ReservationService {
         if ("CANCELED".equals(current.getStatus()) || "COMPLETED".equals(current.getStatus())) {
             throw new IllegalStateException("status cannot be changed");
         }
-        String expected = switch (current.getStatus()) {
-            case "RECEIVED" -> "CONFIRMED";
-            case "CONFIRMED" -> "READY";
-            case "READY" -> "COMPLETED";
-            default -> throw new IllegalStateException("status transition is invalid");
-        };
-        if (!expected.equals(status)) throw new IllegalStateException("status transition is invalid");
+        if (!isAllowedTransition(current.getStatus(), status))
+            throw new IllegalStateException("status transition is invalid");
         if ("COMPLETED".equals(status) && isBeforeReservationStart(current)) {
             throw new IllegalStateException("reservation has not started");
         }
         if (mapper.updateStatus(id, status) == 0) return null;
         return mapper.selectReservationById(id);
+    }
+
+    /** The two progress checks are represented by the existing status column. */
+    private boolean isAllowedTransition(String current, String next) {
+        return switch (current) {
+            case "RECEIVED" -> "CONFIRMED".equals(next);
+            case "CONFIRMED" -> "RECEIVED".equals(next) || "READY".equals(next);
+            // Clearing confirmation from READY clears both progress checks.
+            case "READY" -> "CONFIRMED".equals(next) || "RECEIVED".equals(next) || "COMPLETED".equals(next);
+            default -> false;
+        };
     }
 
     private boolean isBeforeReservationStart(Reservation reservation) {
@@ -82,6 +94,20 @@ public class ReservationService {
             default -> throw new IllegalStateException("status cannot be reverted");
         };
         if (mapper.updateStatus(id, previous) == 0) return null;
+        return mapper.selectReservationById(id);
+    }
+
+    @Transactional
+    public Reservation correctCompletedToReady(Long id, String operator, String reason) {
+        if (reason == null || reason.trim().isEmpty() || reason.trim().length() > 1000)
+            throw new IllegalArgumentException("correction reason is required");
+        Reservation current = mapper.selectReservationById(id);
+        if (current == null) return null;
+        if (!"COMPLETED".equals(current.getStatus()))
+            throw new IllegalStateException("only COMPLETED reservations can be corrected");
+        if (mapper.correctCompletedToReady(id) == 0) throw new IllegalStateException("reservation changed concurrently");
+        correctionMapper.insert(new ReservationCorrectionMapper.CorrectionRecord(id, "COMPLETED", "READY",
+            LocalDateTime.now(clock), operator, reason.trim()));
         return mapper.selectReservationById(id);
     }
 

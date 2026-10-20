@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import org.springframework.security.core.Authentication;
 @RestController
 @RequestMapping("/api/staff/reservations")
 public class StaffReservationController {
@@ -44,10 +45,25 @@ public class StaffReservationController {
         }
     }
 
+    @PatchMapping("/{id}/correction")
+    public Reservation correctCompletedToReady(@PathVariable Long id, @RequestBody CorrectionRequest request,
+                                               Authentication authentication) {
+        if (authentication == null || authentication.getAuthorities().stream()
+            .noneMatch(a -> "ROLE_STAFF".equals(a.getAuthority())))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        try {
+            Reservation r = service.correctCompletedToReady(id, authentication.getName(), request == null ? null : request.reason());
+            if (r == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return r;
+        } catch (IllegalArgumentException e) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e); }
+        catch (IllegalStateException e) { throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e); }
+    }
+
     @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!service.delete(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return ResponseEntity.noContent().build();
     }
     public record StatusRequest(String status) {}
+    public record CorrectionRequest(String reason) {}
 }

@@ -5,6 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 public class SecurityConfig {
@@ -17,13 +22,20 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.POST, "/api/inquiries").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/inquiries/status").permitAll()
 				.requestMatchers("/", "/inquiries", "/inquiries/status", "/css/**", "/js/**", "/images/**").permitAll()
-				.requestMatchers("/api/staff/**").authenticated()
-				.requestMatchers("/staff/**").authenticated()
+				.requestMatchers("/api/staff/**").hasRole("STAFF")
+				.requestMatchers("/staff/**").hasRole("STAFF")
 				.requestMatchers("/api/reservations").permitAll()
 				.anyRequest().authenticated())
 			.formLogin(formLogin -> formLogin.permitAll())
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/reservations", "/api/inquiries", "/api/staff/**"));
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/reservations", "/api/inquiries"));
 
 		return http.build();
+	}
+
+	@Bean
+	UserDetailsService users(@Value("${STAFF_USERNAME}") String staffName,
+	                         @Value("${STAFF_PASSWORD}") String staffPassword) {
+		UserDetails staff = User.withUsername(staffName).password("{noop}" + staffPassword).roles("STAFF").build();
+		return new InMemoryUserDetailsManager(staff);
 	}
 }

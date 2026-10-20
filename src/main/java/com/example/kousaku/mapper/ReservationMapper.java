@@ -28,6 +28,9 @@ public interface ReservationMapper {
     int updateStatus(@org.apache.ibatis.annotations.Param("id") Long id,
                      @org.apache.ibatis.annotations.Param("status") String status);
 
+    @Update("UPDATE reservations SET status = 'READY', updated_at = CURRENT_TIMESTAMP WHERE id = #{id} AND status = 'COMPLETED'")
+    int correctCompletedToReady(Long id);
+
     @Delete("DELETE FROM reservations WHERE id = #{id}")
     int deleteById(@org.apache.ibatis.annotations.Param("id") Long id);
 
