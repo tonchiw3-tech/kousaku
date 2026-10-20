@@ -5,6 +5,7 @@ import com.example.kousaku.dto.ReservationResponse;
 import com.example.kousaku.mapper.ReservationMapper;
 import com.example.kousaku.model.Reservation;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,6 +21,7 @@ public class ReservationService {
     private final ReservationMapper mapper;
     private final Clock clock;
 
+    @Autowired
     public ReservationService(ReservationMapper mapper) { this(mapper, Clock.system(ZoneId.of("Asia/Tokyo"))); }
 
     public ReservationService(ReservationMapper mapper, Clock clock) {

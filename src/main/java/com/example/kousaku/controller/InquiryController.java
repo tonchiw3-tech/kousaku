@@ -1,4 +1,4 @@
-﻿package com.example.kousaku.controller;
+package com.example.kousaku.controller;
 import com.example.kousaku.dto.InquiryRequest;
 import com.example.kousaku.dto.InquiryStatusResponse;
 import com.example.kousaku.model.Inquiry;
