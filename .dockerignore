@@ -1,0 +1,9 @@
+.git
+.history
+.vscode
+target
+.env
+.env.*
+!.env.example
+debug.log
+*.log
