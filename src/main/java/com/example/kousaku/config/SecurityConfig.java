@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfig {
@@ -33,9 +35,15 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
 	UserDetailsService users(@Value("${STAFF_USERNAME}") String staffName,
-	                         @Value("${STAFF_PASSWORD}") String staffPassword) {
-		UserDetails staff = User.withUsername(staffName).password("{noop}" + staffPassword).roles("STAFF").build();
+	                         @Value("${STAFF_PASSWORD}") String staffPassword,
+	                         PasswordEncoder passwordEncoder) {
+		UserDetails staff = User.withUsername(staffName).password(passwordEncoder.encode(staffPassword)).roles("STAFF").build();
 		return new InMemoryUserDetailsManager(staff);
 	}
 }

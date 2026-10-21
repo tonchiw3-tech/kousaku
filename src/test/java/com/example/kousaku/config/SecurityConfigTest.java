@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -22,10 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SecurityConfigTest {
     @Test
     void staffHasOnlyTheUnifiedStaffAuthority() {
-        UserDetailsService users = new SecurityConfig().users("staff-user", "staff-password");
+        UserDetailsService users = new SecurityConfig().users("staff-user", "staff-password", new BCryptPasswordEncoder());
         UserDetails staff = users.loadUserByUsername("staff-user");
 
         assertTrue(staff.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STAFF")));
+        assertTrue(staff.getPassword().startsWith("$2"));
     }
 
     @Test
