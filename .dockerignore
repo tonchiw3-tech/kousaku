@@ -1,9 +1,14 @@
 .git
-.history
+.github
+.idea
 .vscode
 target
+build
+out
+*.log
+*.pid
 .env
 .env.*
 !.env.example
-debug.log
-*.log
+README.md
+documents
