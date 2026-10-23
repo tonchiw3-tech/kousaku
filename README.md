@@ -156,7 +156,7 @@ JUnitによる単体テスト・結合テストを用意しています。
 
 ### 最新テスト実行結果
 
-- JUnitテスト19件、成功19件、失敗0件、エラー0件、スキップ0件
+- JUnitテスト24件、成功24件、失敗0件、エラー0件、スキップ0件（既存19件＋TC-040追加5件）
 - BUILD SUCCESS
 
 ### 実装上の注意
@@ -183,3 +183,16 @@ Dockerfileと`.dockerignore`を用意し、Renderへの公開に対応する構�
 - GitHub: <https://github.com/tonchiw3-tech/kousaku>
 
 > 本プロジェクトは学習・卒業制作を目的としたアプリケーションです。実際の店舗予約サービスとしての運用を保証するものではありません。
+## Web制作総合演習2の設計資料
+
+以下の資料は、Web制作総合演習1の制作資料をもとに作成しました。
+
+- [仕様書](documents/docs/07-specification.html)
+- [DB設計書](documents/docs/08-db-design.html)
+- [テスト報告書 Ver 1.6](documents/docs/09-test-report.html)
+
+JUnitテスト24件すべて成功（既存19件＋TC-040追加5件）
+
+## Renderでの公開状況
+
+Renderでの公開は未実施です。

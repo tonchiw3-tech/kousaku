@@ -103,6 +103,55 @@ class ReservationApiIntegrationTest {
     }
 
     @Test
+    void staffCanRevertConfirmedStatusToReceived() throws Exception {
+        Reservation saved = createReservationWithStatus("revert-confirmed@example.test", "CONFIRMED");
+
+        revertStatus(saved.getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(saved.getId()))
+            .andExpect(jsonPath("$.status").value("RECEIVED"));
+        assertEquals("RECEIVED", reservationMapper.selectReservationById(saved.getId()).getStatus());
+    }
+
+    @Test
+    void staffCanRevertReadyStatusToConfirmed() throws Exception {
+        Reservation saved = createReservationWithStatus("revert-ready@example.test", "READY");
+
+        revertStatus(saved.getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(saved.getId()))
+            .andExpect(jsonPath("$.status").value("CONFIRMED"));
+        assertEquals("CONFIRMED", reservationMapper.selectReservationById(saved.getId()).getStatus());
+    }
+
+    @Test
+    void staffCanRevertCompletedStatusToReady() throws Exception {
+        Reservation saved = createReservationWithStatus("revert-completed@example.test", "COMPLETED");
+
+        revertStatus(saved.getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(saved.getId()))
+            .andExpect(jsonPath("$.status").value("READY"));
+        assertEquals("READY", reservationMapper.selectReservationById(saved.getId()).getStatus());
+    }
+
+    @Test
+    void staffCannotRevertReceivedStatus() throws Exception {
+        Reservation saved = createReservation("revert-received@example.test", 1);
+
+        revertStatus(saved.getId()).andExpect(status().isConflict());
+        assertEquals("RECEIVED", reservationMapper.selectReservationById(saved.getId()).getStatus());
+    }
+
+    @Test
+    void staffCannotRevertCanceledStatus() throws Exception {
+        Reservation saved = createReservationWithStatus("revert-canceled@example.test", "CANCELED");
+
+        revertStatus(saved.getId()).andExpect(status().isConflict());
+        assertEquals("CANCELED", reservationMapper.selectReservationById(saved.getId()).getStatus());
+    }
+
+    @Test
     void staffCanDeleteReservation() throws Exception {
         Reservation saved = createReservation("delete@example.test", 1);
 
@@ -178,6 +227,17 @@ class ReservationApiIntegrationTest {
         return mockMvc.perform(patch("/api/staff/reservations/{id}/status", id)
             .with(user(STAFF_USERNAME).roles("STAFF")).with(csrf())
             .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"" + status + "\"}"));
+    }
+
+    private Reservation createReservationWithStatus(String email, String status) throws Exception {
+        Reservation saved = createReservation(email, 1);
+        assertEquals(1, reservationMapper.updateStatus(saved.getId(), status));
+        return reservationMapper.selectReservationById(saved.getId());
+    }
+
+    private org.springframework.test.web.servlet.ResultActions revertStatus(long id) throws Exception {
+        return mockMvc.perform(patch("/api/staff/reservations/{id}/revert-status", id)
+            .with(user(STAFF_USERNAME).roles("STAFF")).with(csrf()));
     }
 
     private String requestJson(String email, int participants) {

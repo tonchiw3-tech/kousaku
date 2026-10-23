@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テスト報告書</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+/* TC-021 to TC-045 only: vertically stacked cards keep all test details readable without horizontal scrolling. */
+.backend-test-cards {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 24px;
+}
+.backend-test-card {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #bdbdbd;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.backend-test-card__title {
+  margin: 0;
+  padding: 12px 16px;
+  background: #222;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.backend-test-card__details {
+  margin: 0;
+}
+.backend-test-card__row {
+  display: grid;
+  grid-template-columns: minmax(150px, 22%) minmax(0, 1fr);
+  margin: 0;
+  border-top: 1px solid #ddd;
+}
+.backend-test-card__row:first-child {
+  border-top: 0;
+}
+.backend-test-card dt,
+.backend-test-card dd {
+  min-width: 0;
+  margin: 0;
+  padding: 11px 16px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  line-height: 1.65;
+}
+.backend-test-card dt {
+  background: #f1f1f1;
+  color: #222;
+  font-weight: 700;
+}
+.backend-test-card dd {
+  background: #fff;
+}
+@media (max-width: 640px) {
+  .backend-test-card__row {
+    grid-template-columns: 1fr;
+  }
+  .backend-test-card dt {
+    padding-bottom: 6px;
+  }
+  .backend-test-card dd {
+    padding-top: 6px;
+  }
+}
+</style>
+</head>
+<body>
+<button class="hamburger" aria-label="メニュー">
+<span>
+</span>
+<span>
+</span>
+<span>
+</span>
+</button>
+<div class="page-wrapper">
+<aside class="sidebar" data-nav-level="docs">
+</aside>
+<main class="main-content">
+<header class="doc-header">
+<div class="doc-category">DOCUMENT 09</div>
+<h1 class="doc-title">テスト報告書</h1>
+<div class="doc-meta">
+<span>作成日：2026年10月14日</span>
+<span>最終更新日：2026年10月23日</span>
+<span>作成者：鷲巣 友香</span>
+<span>Ver 1.8</span>
+</div>
+</header>
+<div class="doc-body">
+<div class="toc">
+<div class="toc-title">目次</div>
+<ol class="toc-list">
+<li>
+<a href="#sec1">テスト計画</a>
+</li>
+<li>
+<a href="#sec2">テストケース一覧</a>
+</li>
+<li>
+<a href="#sec3">テスト結果サマリー</a>
+</li>
+<li>
+<a href="#sec4">バグ一覧</a>
+</li>
+<li>
+<a href="#sec5">ブラウザ・デバイス対応</a>
+</li>
+</ol>
+</div>
+<section class="section" id="sec1">
+<h2 class="section-title">
+<span class="section-icon">1</span> テスト計画</h2>
+<div class="fill-block">
+<div class="fill-label">テスト対象・範囲 <span class="required">必須</span>
+</div>
+<div class="fill-content">
+<p>本書の主題は、演習2「KOSAKU（香作）」のバックエンドテストである。仕様書（DOCUMENT 07）およびDB設計書（DOCUMENT 08）に基づき、テスト計画、API単体・結合テスト、JUnit実施結果、未実施項目を記録する。</p>
+<p><strong>演習1（参考情報）：旅香のフロントエンドテスト。</strong>GitHub Pages公開サイトで、画面表示・導線を手動確認した既存記録を保持する。演習2の合格率・評価対象には含めない。</p>
+<p><strong>演習2（今回の評価対象）：KOSAKUのバックエンドテスト。</strong>Spring Bootの起動、MyBatis・MySQL接続、予約登録・DB保存、取得・表示、スタッフ管理、ステータス変更、キャンセル、入力値検証、認証・アクセス制御をJUnitで確認する。</p>
+<p>
+<strong>主なテスト対象：</strong>KOSAKUのバックエンド機能（Spring Bootの起動、MyBatis・MySQL接続、予約登録・DB保存、取得・表示、スタッフ管理、ステータス変更、キャンセル、入力値検証、認証・アクセス制御）。旅香のトップページ、ワークショップの紹介・詳細、料金・所要時間、アクセス、FAQ、ページ遷移、画像・文字表示、PC・スマートフォンでの表示、操作性は演習1の参考情報として扱う。</p>
+<p>
+<strong>テスト種別：</strong>機能テスト、画面表示テスト、操作性テスト、正常系・異常系テスト、境界値テスト、セキュリティ確認</p>
+<p>
+<strong>テスト環境：</strong>実際に使用：Windows、Google Chrome（旅香の手動確認・Chrome開発者ツール）、KOSAKUのテスト用DB <code>kousaku_test</code>。未確認：Microsoft Edge、Firefox、Androidスマートフォン、iPhone（Safari）。</p>
+
+</div>
+</div>
+</section>
+<section class="section" id="sec-deploy-guide">
+<h2 class="section-title">
+<span class="section-icon">DG</span> 学校課題（Deploy Guide Step 1〜4）実施状況</h2>
+<div class="fill-block">
+<div class="fill-content">
+<p>学校課題の合否判定は、Deploy GuideのStep 1〜4に必要な確認に限定して整理する。下表の4項目は既存のテストケース（TC-001〜TC-045）の件数には含めず、商用運用を想定した評価とも分けて扱う。</p>
+</div>
+<table class="doc-table">
+<thead>
+<tr>
+<th>Deploy Guide</th>
+<th>確認内容</th>
+<th>実施結果</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Step 1</td>
+<td>Dockerfile・.dockerignoreを作成し、GitHubへPUSHする</td>
+<td>Dockerfile・.dockerignoreの作成およびGitHubへのPUSHは完了済み。</td>
+<td>実施済み</td>
+</tr>
+<tr>
+<td>Step 2</td>
+<td>Renderへ登録し、GitHubと連携する</td>
+<td>Renderへの登録およびGitHub連携は完了済み。</td>
+<td>実施済み</td>
+</tr>
+<tr>
+<td>Step 3</td>
+<td>Renderへデプロイする</td>
+<td>Renderへのデプロイは未実施。</td>
+<td>未実施</td>
+</tr>
+<tr>
+<td>Step 4</td>
+<td>公開URLで動作を確認する</td>
+<td>公開URLでの動作確認は未実施。</td>
+<td>未実施</td>
+</tr>
+</tbody>
+</table>
+<div class="fill-content">
+<p><strong>学校課題の判定：</strong>Step 1〜2は実施済み、Step 3〜4は未実施である。したがって、Render公開を含むDeploy Guide Step 1〜4の完了判定は保留とする。</p>
+</div>
+</div>
+</section>
+<section class="section" id="sec2">
+<h2 class="section-title">
+<span class="section-icon">2</span> テストケース一覧</h2>
+<div class="fill-block">
+<div class="fill-label">テストケース一覧 <span class="required">必須</span>
+</div>
+<table class="doc-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>対象機能</th>
+<th>テスト種別</th>
+<th>テスト内容</th>
+<th>期待結果</th>
+<th>実際の結果</th>
+<th>判定</th>
+<th>確認日</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC-001</td>
+<td>トップ表示</td>
+<td>正常系</td>
+<td>トップページにアクセスする</td>
+<td>ページが正常に表示される</td>
+<td>Google Chromeでトップページが正常に表示された。</td>
+<td>OK</td>
+<td>2026年10月21日</td>
+</tr>
+<tr>
+<td>TC-002</td>
+<td>トップ表示</td>
+<td>正常系</td>
+<td>ロゴ・画像・見出しを確認する</td>
+<td>ロゴ・メイン画像・見出しが正しく表示される</td>
+<td>ロゴ・メイン画像・見出しが正常に表示された。</td>
+<td>OK</td>
+<td>2026年10月21日</td>
+</tr>
+<tr>
+<td>TC-003</td>
+<td>体験紹介</td>
+<td>正常系</td>
+<td>「香作について」を選択する</td>
+<td>inimu公式サイトへ移動する</td>
+<td>inimu公式サイトへ正常に移動した。ワークショップ紹介そのものの表示は確認対象としない。</td>
+<td>OK</td>
+<td>2026年10月21日</td>
+</tr>
+<tr>
+<td>TC-004</td>
+<td>体験情報</td>
+<td>正常系</td>
+<td>料金・所要時間を確認する</td>
+<td>開催日・料金・所要時間が表示され、PC画面で3カードが横並びで表示される</td>
+<td>旅香の公開サイトで開催日「土日祝日」、料金「5,500円」、所要時間「約60分」とPC画面での3カード横並びを確認した。</td>
+<td>OK</td>
+<td>2026年10月21日</td>
+</tr>
+<tr>
+<td>TC-005</td>
+<td>アクセス</td>
+<td>正常系</td>
+<td>アクセスページを開く</td>
+<td>アクセス案内、店舗所在地、Googleマップへの移動を確認できる</td>
+<td>旅香のアクセス案内、inimuの店舗所在地（東京都台東区浅草2丁目1-5）、Googleマップへの移動および浅草駅からの徒歩ルートを確認した。</td>
+<td>OK</td>
+<td>2026年10月21日</td>
+</tr>
+<tr>
+<td>TC-006</td>
+<td>FAQ</td>
+<td>正常系</td>
+<td>FAQを開く</td>
+<td>質問と回答が表示され、「所要時間はどれくらいですか？」の回答に約60分と表示される</td>
+<td>FAQページで質問と回答が表示され、該当回答に「約60分」と表示された。</td>
+<td>OK</td>
+<td>2026年10月21日</td>
+</tr>
+<tr>
+<td>TC-008</td>
+<td>ページ遷移</td>
+<td>正常系</td>
+<td>メニューを選択する</td>
+<td>対象ページに移動する</td>
+<td>Google Chromeで旅香の公開サイトを操作し、「おすすめの過ごし方」のメニューから対象ページへ正常に移動できた。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-009</td>
+<td>ページ遷移</td>
+<td>正常系</td>
+<td>トップへ戻る操作をする</td>
+<td>トップページへ戻る</td>
+<td>対象ページからトップページへ正常に戻れた。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-010</td>
+<td>ページ遷移</td>
+<td>異常系</td>
+<td>存在しないURLへアクセスする</td>
+<td>適切なエラー表示になる</td>
+<td>存在しないURLへアクセスすると、GitHub Pagesの404エラー画面が表示された。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-011</td>
+<td>画像表示</td>
+<td>異常系</td>
+<td>画像の参照先を確認する</td>
+<td>画像が欠けずに表示される</td>
+<td>メイン画像・体験紹介画像が正常に表示された。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-012</td>
+<td>画面表示</td>
+<td>境界値</td>
+<td>画面幅320pxで確認する</td>
+<td>文字・画像が重ならない</td>
+<td>2026年10月22日、WindowsのGoogle Chrome開発者ツールで画面幅320pxのページ全体を確認した。文字や画像の重なり、レイアウト崩れ、不要な横スクロールはなかった。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-013</td>
+<td>画面表示</td>
+<td>境界値</td>
+<td>画面幅390pxで確認する</td>
+<td>スマートフォンで操作できる</td>
+<td>2026年10月22日、WindowsのGoogle Chrome開発者ツールで画面幅390pxのページ全体を確認した。文字や画像の重なり、レイアウト崩れ、不要な横スクロールはなかった。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-014</td>
+<td>画面表示</td>
+<td>境界値</td>
+<td>画面幅768pxで確認する</td>
+<td>レイアウトが崩れない</td>
+<td>2026年10月22日、WindowsのGoogle Chrome開発者ツールで画面幅768pxのページ全体を確認した。文字や画像の重なり、レイアウト崩れ、不要な横スクロールはなかった。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-015</td>
+<td>画面表示</td>
+<td>境界値</td>
+<td>画面幅1440pxで確認する</td>
+<td>PC表示が正常である</td>
+<td>1440pxでトップ・体験紹介・料金カード・アクセス・フッターを確認し、正常に表示された。Googleマップは開発者ツール表示中に操作できない場面があったが、通常PC画面では正常に操作できた。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-016</td>
+<td>操作性</td>
+<td>正常系</td>
+<td>トップページから香りづくり体験の基本情報を確認する</td>
+<td>開催日・料金・所要時間を確認できる</td>
+<td>開催日「土日祝日」、料金「5,500円」、所要時間「約60分」を確認した。</td>
+<td>OK</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-017</td>
+<td>セキュリティ</td>
+<td>確認</td>
+<td>公開ファイルの内容を確認する</td>
+<td>秘密情報が公開されていない</td>
+<td>公開リポジトリとGitHub Pagesを読み取り確認。公開設定ファイルに平文のデータベース接続パスワードが含まれていたためNG。値は記録しない。</td>
+<td>NG</td>
+<td>2026年10月22日</td>
+</tr>
+<tr>
+<td>TC-018</td>
+<td>ブラウザ</td>
+<td>正常系</td>
+<td>Chromeで操作する</td>
+<td>表示・操作に問題がない</td>
+<td>ブラウザ別の一連の操作テストは未実施</td>
+<td>未実施</td>
+<td>―</td>
+</tr>
+<tr>
+<td>TC-019</td>
+<td>ブラウザ</td>
+<td>正常系</td>
+<td>Edgeで操作する</td>
+<td>表示・操作に問題がない</td>
+<td>ブラウザ別の一連の操作テストは未実施</td>
+<td>未実施</td>
+<td>―</td>
+</tr>
+<tr>
+<td>TC-020</td>
+<td>ブラウザ</td>
+<td>正常系</td>
+<td>Firefoxで操作する</td>
+<td>表示・操作に問題がない</td>
+<td>ブラウザ別の一連の操作テストは未実施</td>
+<td>未実施</td>
+<td>―</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<h3>バックエンド追加テスト（TC-021〜TC-045）</h3>
+<div class="backend-test-cards" aria-label="繝舌ャ繧ｯ繧ｨ繝ｳ繝芽ｿｽ蜉繝・せ繝茨ｼ・C-021縲弋C-045・・>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-021</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>Spring Boot起動</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-001）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>アプリケーションコンテキストを起動する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>Spring Bootのコンテキストが正常に起動する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>既存実行記録で成功。KousakuApplicationTests.contextLoadsに対応。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-022</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-002）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>開始前のREADY予約をCOMPLETEDに更新する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>更新を拒否し、DB更新を行わない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>IllegalStateExceptionを確認し、MapperのupdateStatus未呼出しを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-023</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-003）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>開始後のREADY予約をスタッフがCOMPLETEDへ更新する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>更新できる。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>例外なく更新され、MapperのupdateStatus呼出しを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-024</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-004）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>進捗をCONFIRMEDおよびRECEIVEDへ更新する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>許可された遷移は更新できる。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>両ステータスへのMapper更新呼出しを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-025</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-005）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>RECEIVED予約をREADYへ更新する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>確認前の準備完了を拒否し、DB更新を行わない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>IllegalStateExceptionとMapper未呼出しを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-026</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-006）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>キャンセル済み予約の進捗を変更する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>更新を拒否し、DB更新を行わない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>IllegalStateExceptionとMapper未呼出しを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-027</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約訂正・監査</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-007）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>完了済み予約を理由なし／理由ありでREADYへ訂正する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>理由なしを拒否し、理由ありでは監査記録を作成する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>理由なしでIllegalArgumentException、理由ありで訂正監査Mapperへのinsertを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-028</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約登録・MyBatis・MySQL</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-008）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>予約APIへ有効な予約をPOSTする。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>201、予約番号・初期状態を返し、テストDBへ保存する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>201、RECEIVED、予約番号、Mapperで取得した保存内容を検証済み。kousaku_test接続確認を伴う。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-029</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>スタッフ予約管理</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-009）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>スタッフとして予約一覧と詳細をGETする。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>登録済み予約を一覧・詳細で取得できる。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>200とメールアドレス・予約番号・RECEIVEDを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-030</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス変更</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-010）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>スタッフとしてRECEIVED→CONFIRMED→READYへ更新する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>許可された遷移が反映される。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>各API応答とMapperで取得したREADY状態を検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-031</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約キャンセル</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-011）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>スタッフとしてキャンセルAPIを実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>予約がCANCELEDへ更新される。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>200とMapperで取得したCANCELED状態を検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-032</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約削除</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-012）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>スタッフとして予約削除APIを実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>204を返し、予約を取得できなくなる。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>204とMapperでnullになることを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-033</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>入力値検証</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-013）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>必須項目欠落、人数0、不正メールで予約登録する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>各入力を400で拒否する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>3条件とも400を検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-034</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>認証・アクセス制御</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-014）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>未認証でスタッフ予約一覧APIをGETする。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>ログイン画面へリダイレクトする。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>3xxリダイレクトを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-035</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>認可・アクセス制御</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-015）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>STAFF以外のロールでスタッフ予約一覧APIをGETする。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>アクセスを403で拒否する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>403を検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-036</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス変更</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-016）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>不正な遷移と未知のステータス値で更新する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>不正遷移は409、未知値は400で拒否し、状態を変更しない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>409・400およびMapperでRECEIVEDのままを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-037</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>スタッフ権限設定</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-017）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>SecurityConfigで作成したスタッフを取得する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>ROLE_STAFFのみを持ち、パスワードはハッシュ化される。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>ROLE_STAFFとBCrypt形式のパスワードを検証済み。値は記録しない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-038</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約訂正API</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-018）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>STAFF権限で完了済み予約の訂正エンドポイントを呼び出す。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>スタッフが訂正処理を利用できる。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>コントローラーがサービスの訂正結果を返すことを検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-039</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ルール検証</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（JT-019）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>人数上限超過、平日、時間枠外、年齢区分不正で予約登録する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>各入力を400で拒否する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>4条件とも400を検証済み。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-040</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>予約ステータス戻し</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>JUnit（追加5件）</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>テスト用DB（<code>kousaku_test</code>）で<code>PATCH /api/staff/reservations/{id}/revert-status</code>を5件実行した。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>各予約が1段階前（RECEIVED、CONFIRMED、READY）へ戻り、RECEIVED・CANCELEDは更新を拒否する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>CONFIRMED→RECEIVED、READY→CONFIRMED、COMPLETED→READYはいずれもHTTP 200で、JSON・<code>kousaku_test</code>のDBともに遷移後ステータスを確認した。RECEIVED・CANCELEDはいずれもHTTP 409でDB変更なし。<code>kousaku</code>本体DBへの変更はない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>OK</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-041</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>完了後訂正・履歴保存</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>未実施</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>STAFFでCOMPLETED予約に理由を指定して<code>PATCH /api/staff/reservations/{id}/correction</code>を実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>予約がREADYになり、同一トランザクションで訂正履歴（訂正前後・操作者・理由）が1件保存される。理由なしは拒否する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>reservationsとreservation_status_correctionsをテスト用MySQLで照合し、HTTP応答を記録する。実施記録なし。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>未実施</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-042</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>月別予約カレンダー</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>未実施</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>STAFFで<code>GET /api/staff/calendar?year={year}&amp;month={month}</code>を実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>対象月の予約日・件数・ステータス集計が返る。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>テスト用予約を登録後、レスポンスをreservationsの対象月データと照合する。実施記録なし。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>未実施</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-043</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>日別予約・準備状況</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>未実施</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>STAFFで<code>GET /api/staff/calendar/{date}</code>を実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>対象日の予約一覧と準備状況が返り、他日の予約は含まれない。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>テスト用MySQLの予約日・statusとレスポンスを照合する。実施記録なし。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>未実施</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-044</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>問い合わせ登録・状況照会</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>未実施</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>有効な問い合わせを<code>POST /api/inquiries</code>で登録し、返却番号で<code>GET /api/inquiries/status</code>を実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>201で問い合わせ番号が発行され、番号指定で現在の状態を取得できる。不在番号は404となる。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>inquiriesテーブルとAPI応答を照合する。実施記録なし。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>未実施</dd>
+      </div>
+    </dl>
+  </article>
+  <article class="backend-test-card">
+    <h4 class="backend-test-card__title">TC-045</h4>
+    <dl class="backend-test-card__details">
+      <div class="backend-test-card__row">
+        <dt>対象機能</dt>
+        <dd>スタッフ問い合わせ管理</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>テスト種別</dt>
+        <dd>未実施</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>操作・テスト内容</dt>
+        <dd>STAFFで問い合わせ一覧・詳細を取得し、状態更新と返信APIを実行する。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>期待結果</dt>
+        <dd>認証済みスタッフのみが一覧・詳細・更新・返信を行え、更新内容が保存される。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>実際の結果</dt>
+        <dd>HTTP応答とinquiriesテーブルの状態・返信内容を照合し、未認証時の拒否も確認する。実施記録なし。</dd>
+      </div>
+      <div class="backend-test-card__row">
+        <dt>判定</dt>
+        <dd>未実施</dd>
+      </div>
+    </dl>
+  </article>
+</div>
+<section class="section" id="sec3">
+<h2 class="section-title">
+<span class="section-icon">3</span> テスト結果サマリー</h2>
+<div class="fill-block"><div class="fill-content"><table class="doc-table"><thead><tr><th>区分</th><th>対象</th><th>OK</th><th>NG</th><th>未実施</th><th>合格率</th></tr></thead><tbody><tr><td>演習1（参考）</td><td>旅香 TC-001〜006、008〜020</td><td>15</td><td>1</td><td>3</td><td>93.8%（判定済み16件）</td></tr><tr><td>演習2（評価対象）</td><td>KOSAKU TC-021〜045</td><td>20</td><td>0</td><td>5</td><td>100%（判定済み20件）</td></tr><tr><td>全体（参考集計）</td><td>TC-001〜006、008〜045</td><td>35</td><td>1</td><td>8</td><td>97.2%（判定済み36件）</td></tr></tbody></table><p>演習2のOK 20件は、既存JUnit 19件（JT-001〜JT-019）をTC-021〜TC-039へ一対一対応付けた19件と、TC-040の追加JUnit 5件を合わせたものである。JUnit実績を別件として加算していない。従来の全体集計は旅香の参考記録を含むため、演習2の評価には用いない。</p></div></div>
+<div class="fill-block">
+<table class="doc-table">
+<thead>
+<tr>
+<th>項目</th>
+<th>件数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>総テストケース数</td>
+<td>44（TC-001〜TC-006、TC-008〜TC-045）</td>
+</tr>
+<tr>
+<td>OK</td>
+<td>35（手動15件＋KOSAKU 20件）</td>
+</tr>
+<tr>
+<td>NG</td>
+<td>1</td>
+</tr>
+<tr>
+<td>未実施</td>
+<td>8</td>
+</tr>
+<tr>
+<td>合格率</td>
+<td>97.2%（判定済み36件中：OK 35件、NG 1件）</td>
+</tr>
+</tbody>
+</table>
+<div class="fill-content">
+<p>2026年10月21日にWindows・Google Chrome・GitHub Pages公開サイトで旅香のTC-001〜TC-006を手動確認し、すべてOKとした。2026年10月22日にはTC-008〜TC-016を確認した。このうちTC-012（320px）、TC-013（390px）、TC-014（768px）は、WindowsのGoogle Chrome開発者ツールでページ全体を確認し、文字や画像の重なり、レイアウト崩れ、不要な横スクロールがないことを確認してOKとした。TC-017では公開リポジトリの設定ファイルに平文のデータベース接続パスワードを確認したためNGとした（値は記録しない）。TC-021〜TC-039は既存JUnit 19件（JT-001〜JT-019）の報告書上の対応ケースであり、TC-040は追加JUnit 5件で確認した。JUnitは既存19件と追加5件の計24件すべて成功し、失敗・エラー・スキップはいずれも0件、結果はBUILD SUCCESSであった。Renderへのデプロイ（Deploy Guide Step 3）および公開URLでの動作確認（Step 4）は未実施であり、本集計には含めない。</p>
+</div>
+</div>
+</section>
+<section class="section" id="sec-junit">
+<h2 class="section-title">
+<span class="section-icon">JUnit</span> JUnit実施結果（2026年10月23日）</h2>
+<div class="fill-block">
+<div class="fill-label">実施条件 <span class="required">必須</span>
+</div>
+<div class="fill-content">
+<p>
+<strong>実施日時：</strong>2026年10月23日 JST<br>
+<strong>実行コマンド：</strong>
+<code>.\mvnw.cmd test</code>
+<br>
+<strong>対象DB：</strong>kousaku_test<br>
+<strong>結果：</strong>BUILD SUCCESS（テスト件数：24、成功：24、失敗：0、エラー：0、スキップ：0）</p>
+<p>既存JUnit 19件（ReservationServiceTest: 6、ReservationApiIntegrationTest: 10、SecurityConfigTest: 2、KousakuApplicationTests: 1）に、TC-040の追加5件を加えた計24件を実行した。追加5件は、3件の有効なステータス戻しと、RECEIVED・CANCELEDの更新拒否を確認した。</p>
+</div>
+<div class="fill-label">既存JUnitテストケース一覧（19件） <span class="required">必須</span>
+</div>
+<table class="doc-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>対象機能</th>
+<th>区分</th>
+<th>テスト内容</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JT-001</td>
+<td>アプリケーション</td>
+<td>正常系</td>
+<td>Spring Bootのアプリケーションコンテキストを起動する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-002</td>
+<td>予約ステータス</td>
+<td>異常系</td>
+<td>開始前の予約を完了へ更新する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-003</td>
+<td>予約ステータス</td>
+<td>正常系</td>
+<td>開始済みの予約をスタッフが完了へ更新する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-004</td>
+<td>予約ステータス</td>
+<td>正常系</td>
+<td>進行状況の確認・受付を更新する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-005</td>
+<td>予約ステータス</td>
+<td>異常系</td>
+<td>確認前の予約を準備完了へ更新する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-006</td>
+<td>予約ステータス</td>
+<td>異常系</td>
+<td>キャンセル済み予約の進行状況を更新する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-007</td>
+<td>予約訂正・監査</td>
+<td>異常系</td>
+<td>訂正理由なしを拒否し、理由ありの訂正時に監査記録を作成する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-008</td>
+<td>予約API</td>
+<td>API・結合／正常系</td>
+<td>予約作成（201）とDB保存・予約番号を確認する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-009</td>
+<td>スタッフ予約API</td>
+<td>API・結合／正常系</td>
+<td>予約一覧・詳細を取得する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-010</td>
+<td>スタッフ予約API</td>
+<td>API・結合／正常系</td>
+<td>許可されたステータス遷移を更新する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-011</td>
+<td>スタッフ予約API</td>
+<td>API・結合／正常系</td>
+<td>予約をキャンセルする</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-012</td>
+<td>スタッフ予約API</td>
+<td>API・結合／正常系</td>
+<td>予約を削除する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-013</td>
+<td>予約API</td>
+<td>API・結合／異常系</td>
+<td>必須項目欠落・参加人数不正・メール形式不正を拒否する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-014</td>
+<td>スタッフ予約API</td>
+<td>API・結合／異常系</td>
+<td>未認証利用者をログインへリダイレクトする</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-015</td>
+<td>スタッフ予約API</td>
+<td>API・結合／異常系</td>
+<td>スタッフ権限のない利用者を拒否する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-016</td>
+<td>スタッフ予約API</td>
+<td>API・結合／異常系</td>
+<td>不正なステータス遷移・値を拒否する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-017</td>
+<td>スタッフ権限</td>
+<td>正常系</td>
+<td>スタッフに統一した権限が設定されることを確認する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-018</td>
+<td>予約訂正API</td>
+<td>結合／正常系</td>
+<td>スタッフが訂正エンドポイントを利用できることを確認する</td>
+<td>OK</td>
+</tr>
+<tr>
+<td>JT-019</td>
+<td>予約API</td>
+<td>API・結合／異常系</td>
+<td>人数・曜日・時間枠・年齢区分が予約ルール外の場合に拒否する</td>
+<td>OK</td>
+</tr>
+</tbody>
+</table>
+<div class="fill-content">
+<p>
+<strong>照合結果：</strong>全19件は実在する<code>@Test</code>メソッドに対応する。正常系10件、異常系9件（うちAPI・結合テスト10件：正常系5件、異常系5件）であり、実行結果との矛盾はない。</p>
+</div>
+</div>
+</section>
+<section class="section" id="sec4">
+<h2 class="section-title">
+<span class="section-icon">4</span> バグ一覧</h2>
+<div class="fill-block">
+<table class="doc-table">
+<thead>
+<tr>
+<th>バグID</th>
+<th>発見日</th>
+<th>対象機能</th>
+<th>内容</th>
+<th>重大度</th>
+<th>対応状況</th>
+</tr>
+</thead><tbody>
+<tr><td>BUG-001</td><td>2026年10月22日</td><td>旅香の公開リポジトリの設定ファイル</td><td>旅香で平文のデータベース接続パスワードが記載されていることを確認した。KOSAKU本体の不具合としては扱わず、値・認証情報は本書に記録しない。</td><td>高</td><td>未解決（旅香 TC-017：NG）。解消を示す証拠は未確認。</td></tr>
+</tbody>
+</table>
+<div class="fill-content">
+<p>BUG-001は、旅香の公開リポジトリで確認された問題であり、KOSAKU本体の不具合や演習2のJUnit評価とは混同しない。値・認証情報は記録しない。解消の証拠は未確認のため、未解決、旅香 TC-017の判定はNGのままとする。</p>
+</div>
+</div>
+</section>
+<section class="section" id="sec5">
+<h2 class="section-title">
+<span class="section-icon">5</span> ブラウザ・デバイス対応</h2>
+<div class="fill-block">
+<table class="doc-table">
+<thead>
+<tr>
+<th>ブラウザ／デバイス</th>
+<th>バージョン</th>
+<th>表示</th>
+<th>機能</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chrome（PC）</td><td>Google Chrome（Windows、2026年10月21日／22日）</td><td>確認済み</td><td>確認済み</td><td>Windows・2026年10月21日／22日。TC-001〜TC-016の実施記録に基づく。</td>
+</tr>
+<tr>
+<td>Firefox（PC）</td>
+<td>―</td>
+<td>未確認</td>
+<td>未確認</td>
+<td>Windows</td>
+</tr>
+<tr>
+<td>Edge（PC）</td>
+<td>―</td>
+<td>未確認</td>
+<td>未確認</td>
+<td>ブラウザ別の操作テスト未実施</td>
+</tr>
+<tr>
+<td>Chrome（スマートフォン）</td>
+<td>―</td>
+<td>未確認</td>
+<td>未確認</td>
+<td>スマートフォン実機での確認未実施</td>
+</tr>
+<tr>
+<td>Safari（iPhone）</td>
+<td>―</td>
+<td>未確認</td>
+<td>未確認</td>
+<td>iPhone実機での確認未実施</td>
+</tr>
+</tbody>
+</table>
+<div class="fill-content">
+<p><strong>集計上の扱い：</strong>本表は補足的な画面表示確認であり、JUnitの合格率には含めない。</p>
+<p>
+<strong>確認内容：</strong>文字や画像の表示、メニューの操作、リンク先への移動、画面幅に応じたレイアウト、ボタンの押しやすさを確認する。</p>
+<p>
+<strong>判定基準：</strong>○＝問題なし、△＝軽微な不具合あり、×＝正常に動作しない、未確認＝テスト未実施</p>
+</div>
+</div>
+</section>
+<div class="fill-content">
+<p>
+<strong>総合評価：</strong>旅香のTC-001〜TC-006、TC-008〜TC-016はOKとした。TC-012〜TC-014は2026年10月22日にWindowsのGoogle Chrome開発者ツールで各画面幅のページ全体を確認し、文字や画像の重なり、レイアウト崩れ、不要な横スクロールがないことを確認した。TC-017は公開リポジトリの設定ファイルに平文のデータベース接続パスワードが含まれていたためNGとした（値は記録しない）。KOSAKUのJUnitによるバックエンド機能テストは、既存19件とTC-040の追加5件の計24件が全件成功している。</p>
+</div>
+<section class="section" id="sec6">
+<h2 class="section-title">
+<span class="section-icon">6</span>実施記録・未実施項目</h2>
+<div class="fill-block">
+<div class="fill-content">
+<p>
+<strong>実施日時：</strong>2026年10月23日 JST<br>
+<strong>対象アプリ：</strong>KOSAKU（<code>C:\src\kousaku</code>）<br>
+<strong>実行コマンド：</strong>
+<code>.\mvnw.cmd test</code>
+<br>
+<strong>対象DB：</strong>
+<code>kousaku_test</code>
+<br>
+<strong>結果：</strong>JUnitテスト24件（既存19件＋追加5件）、成功24件、失敗0件、エラー0件、スキップ0件、<strong>BUILD SUCCESS</strong>。</p>
+<p>旅香のTC-001〜TC-006は2026年10月21日にWindows・Google Chrome・GitHub Pages公開サイトで手動確認済みである。2026年10月22日にTC-008〜TC-016を追加で確認した。TC-012（320px）、TC-013（390px）、TC-014（768px）は、WindowsのGoogle Chrome開発者ツールで各画面幅のページ全体を確認し、文字や画像の重なり、レイアウト崩れ、不要な横スクロールがないことを確認してOKとした。TC-017は公開リポジトリで平文のデータベース接続パスワードを確認したためNGとした。TC-018以降の旅香の判定は変更しない。KOSAKUは既存JUnit 19件にTC-040の追加5件を加えた24件が成功し、TC-041〜TC-045は未実施のままとする。</p>
+</div>
+<table class="doc-table">
+<thead>
+<tr>
+<th>ID</th>
+<th>対象</th>
+<th>結果</th>
+<th>実際の結果・根拠</th>
+<th>人による確認手順</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC-001</td>
+<td>旅香</td>
+<td>OK</td>
+<td>2026年10月21日、Windows・Google Chrome・GitHub Pages公開サイトでトップページが正常に表示された。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-002</td>
+<td>旅香</td>
+<td>OK</td>
+<td>ロゴ・メイン画像・見出しが正常に表示された。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-003</td>
+<td>旅香</td>
+<td>OK</td>
+<td>「香作について」からinimu公式サイトへ正常に移動した。ワークショップ紹介そのものの表示は確認していない。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-004</td>
+<td>旅香</td>
+<td>OK</td>
+<td>開催日「土日祝日」、料金「5,500円」、所要時間「約60分」およびPC画面での3カード横並びを確認した。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-005</td>
+<td>旅香</td>
+<td>OK</td>
+<td>アクセス案内、inimu所在地「東京都台東区浅草2丁目1-5」、Googleマップへの移動と浅草駅からの徒歩ルートを確認した。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-006</td>
+<td>旅香</td>
+<td>OK</td>
+<td>FAQで質問と回答を確認し、「所要時間はどれくらいですか？」の回答に「約60分」と表示された。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-008</td>
+<td>旅香</td>
+<td>OK</td>
+<td>2026年10月22日にGoogle Chromeで旅香の公開サイトを操作し、「おすすめの過ごし方」のメニューから対象ページへ正常に移動できた。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-009</td>
+<td>旅香</td>
+<td>OK</td>
+<td>対象ページからトップページへ正常に戻れた。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-010</td>
+<td>旅香</td>
+<td>OK</td>
+<td>存在しないURLでGitHub Pagesの404エラー画面が表示された。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-011</td>
+<td>旅香</td>
+<td>OK</td>
+<td>メイン画像・体験紹介画像が正常に表示された。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-012</td>
+<td>旅香</td>
+<td>OK</td>
+<td>2026年10月22日、WindowsのGoogle Chrome開発者ツールで320pxのページ全体を確認。文字・画像の重なり、レイアウト崩れ、不要な横スクロールはなかった。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-013</td>
+<td>旅香</td>
+<td>OK</td>
+<td>2026年10月22日、WindowsのGoogle Chrome開発者ツールで390pxのページ全体を確認。文字・画像の重なり、レイアウト崩れ、不要な横スクロールはなかった。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-014</td>
+<td>旅香</td>
+<td>OK</td>
+<td>2026年10月22日、WindowsのGoogle Chrome開発者ツールで768pxのページ全体を確認。文字・画像の重なり、レイアウト崩れ、不要な横スクロールはなかった。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-015</td>
+<td>旅香</td>
+<td>OK</td>
+<td>1440pxでトップ・体験紹介・料金カード・アクセス・フッターを確認。通常PC画面でGoogleマップも操作できた。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-016</td>
+<td>旅香</td>
+<td>OK</td>
+<td>トップから香りづくり体験の基本情報を確認し、開催日「土日祝日」、料金「5,500円」、所要時間「約60分」を確認した。</td>
+<td>実施済み。</td>
+</tr>
+<tr>
+<td>TC-017</td>
+<td>旅香</td>
+<td>NG</td>
+<td>公開リポジトリの<code>tabika/src/main/resources/application.properties</code>に平文のデータベース接続パスワードを確認した。値は記録しない。GitHub PagesのトップページはHTTP 200で取得し、HTMLに代表的なAPIキー・トークン・秘密鍵形式は検出されなかった。追跡済みの.env、鍵・証明書、credentials・secret名のファイルは検出されなかった。</td>
+<td>当該パスワードを環境変数等へ移し、公開履歴を含めて失効・ローテーションする。修正後に公開リポジトリとPagesを再確認する。</td>
+</tr>
+<tr>
+<td>TC-018</td>
+<td>旅香</td>
+<td>未実施</td>
+<td>ブラウザ別の一連の操作テストは未実施</td>
+<td>ChromeでTC-001〜016を実施する。</td>
+</tr>
+<tr>
+<td>TC-019</td>
+<td>旅香</td>
+<td>未実施</td>
+<td>ブラウザ別の一連の操作テストは未実施</td>
+<td>EdgeでTC-001〜016を実施する。</td>
+</tr>
+<tr>
+<td>TC-020</td>
+<td>旅香</td>
+<td>未実施</td>
+<td>ブラウザ別の一連の操作テストは未実施</td>
+<td>FirefoxでTC-001〜016を実施する。</td>
+</tr>
+<tr>
+<td>TC-040</td>
+<td>KOSAKU</td>
+<td>OK</td>
+<td><code>kousaku_test</code>で5件を実行。CONFIRMED→RECEIVED、READY→CONFIRMED、COMPLETED→READYはHTTP 200でJSON・DBともに遷移後ステータスを確認。RECEIVED・CANCELEDはHTTP 409でDB変更なし。</td>
+<td>JUnit追加5件として実施済み。<code>kousaku</code>本体DBへの変更なし。</td>
+</tr>
+<tr>
+<td>TC-041</td>
+<td>KOSAKU</td>
+<td>未実施</td>
+<td>未実施（実行結果なし）</td>
+<td>訂正API実行後に予約状態と訂正履歴をテスト用MySQLで照合する。</td>
+</tr>
+<tr>
+<td>TC-042</td>
+<td>KOSAKU</td>
+<td>未実施</td>
+<td>未実施（実行結果なし）</td>
+<td>対象月の予約を用意し、API応答とreservationsを照合する。</td>
+</tr>
+<tr>
+<td>TC-043</td>
+<td>KOSAKU</td>
+<td>未実施</td>
+<td>未実施（実行結果なし）</td>
+<td>対象日のAPI応答をテスト用MySQLの予約日・statusと照合する。</td>
+</tr>
+<tr>
+<td>TC-044</td>
+<td>KOSAKU</td>
+<td>未実施</td>
+<td>未実施（実行結果なし）</td>
+<td>登録後に問い合わせ番号で照会し、inquiriesとAPI応答を照合する。</td>
+</tr>
+<tr>
+<td>TC-045</td>
+<td>KOSAKU</td>
+<td>未実施</td>
+<td>未実施（実行結果なし）</td>
+<td>STAFFによる取得・状態更新・返信と、未認証時の拒否を確認する。</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="section" id="sec7">
+<h2 class="section-title">
+<span class="section-icon">7</span>最終サマリー</h2>
+<div class="fill-block">
+<table class="doc-table">
+<thead>
+<tr>
+<th>項目</th>
+<th>件数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC-001〜TC-006、TC-008〜TC-045</td>
+<td>44</td>
+</tr>
+<tr>
+<td>OK</td>
+<td>35（旅香：TC-001〜TC-006、TC-008〜TC-016、KOSAKU：TC-021〜TC-040）</td>
+</tr>
+<tr>
+<td>NG</td>
+<td>1</td>
+</tr>
+<tr>
+<td>未実施</td>
+<td>8（TC-018〜TC-020、TC-041〜TC-045）</td>
+</tr>
+<tr>
+<td>合計</td>
+<td>44</td>
+</tr>
+<tr>
+<td>JUnit実行結果</td>
+<td>24 / 24 成功（既存19件＋追加5件）、BUILD SUCCESS</td>
+</tr>
+<tr>
+<td>合格率</td>
+<td>97.2%（判定済み36件中：OK 35件、NG 1件）</td>
+</tr>
+</tbody>
+</table>
+<div class="fill-label">変更履歴</div>
+<table class="doc-table">
+<thead>
+<tr>
+<th>日付</th>
+<th>バージョン</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026年10月21日</td>
+<td>Ver 1.4</td>
+<td>JUnitを再実行して19件成功を確認。テストケース見直し後に残る19件を個別に判定し、未実施理由と手動確認手順を記録。</td>
+</tr>
+<tr>
+<td>2026年10月22日</td>
+<td>Ver 1.4</td>
+<td>2026年10月21日の手動テスト結果を反映。旅香のTC-001〜TC-006をOKとして記録し、集計を更新。</td>
+</tr>
+<tr>
+<td>2026年10月22日</td>
+<td>Ver 1.4</td>
+<td>旅香のTC-008で「おすすめの過ごし方」のメニューから対象ページへ正常に移動できることを確認し、OKとして記録。集計を更新。</td>
+</tr>
+<tr>
+<td>2026年10月22日</td>
+<td>Ver 1.4</td>
+<td>旅香のTC-009〜TC-011、TC-015、TC-016の手動テスト結果を反映。TC-012〜TC-014は部分確認としてOK判定を保留し、公開リポジトリの設定ファイルに平文のデータベース接続パスワードを確認したためTC-017をNGとして記録。集計を更新。</td>
+</tr>
+<tr>
+<td>2026年10月22日</td>
+<td>Ver 1.4</td>
+<td>TC-012（320px）、TC-013（390px）、TC-014（768px）について、WindowsのGoogle Chrome開発者ツールでのユーザー確認と上部表示のスクリーンショット確認を反映。ページ全体は未確認のため、3件を部分確認済みとして記録し、集計を更新。</td>
+</tr>
+<tr>
+<td>2026年10月22日</td>
+<td>Ver 1.4</td>
+<td>TC-012〜TC-014について、各画面幅でページ全体を確認し、文字や画像の重なり、レイアウト崩れ、不要な横スクロールがないことを確認したため、判定をOKへ更新。集計を再計算。</td>
+</tr>
+<tr>
+<td>2026年10月23日</td>
+<td>Ver 1.5</td>
+<td>学校のDeploy Guide Step 1〜4に沿って実施状況を整理。Step 1〜2を実施済み、Renderデプロイ（Step 3）・公開URL確認（Step 4）を未実施として記録し、既存テスト44件の未実施件数を9件へ訂正。学校課題の判定と商用運用向け評価を分離。</td>
+</tr><tr><td>2026年10月23日</td><td>Ver 1.6</td><td>既存のJUnit実行記録とテストコードを照合し、TC-021〜TC-039をJT-001〜JT-019に一対一対応付けた。JUnit実績を重複計上しないこと、TC-017の未解決BUG-001、未実施ケースの確認方法を明記。</td></tr><tr><td>2026年10月23日</td><td>Ver 1.7</td><td>報告書の主題を演習2 KOSAKUバックエンドテストへ変更。演習1・演習2・全体参考集計を分離し、TC-040〜045を仕様書・DB設計書・実装に存在する未実施機能へ具体化。BUG-001が旅香の未解決問題であることを明記。</td></tr><tr><td>2026年10月23日</td><td>Ver 1.8</td><td>TC-040の予約ステータス戻しを<code>kousaku_test</code>で追加JUnit 5件として実施し、全件OKを確認。JUnit実績を既存19件と追加5件の計24件成功へ更新し、KOSAKU・全体集計を再計算。<code>kousaku</code>本体DBへの変更なし。</td></tr>
+</tbody>
+</table>
+<div class="fill-content">
+<p><strong>学校課題の最終判定：</strong>Deploy Guide Step 1〜2（Dockerfile・.dockerignore作成とGitHubへのPUSH、Render登録とGitHub連携）は実施済みである。Step 3（Renderデプロイ）およびStep 4（公開URLでの動作確認）は未実施のため、Deploy Guide全体の完了判定は保留とする。KOSAKUのJUnitは既存19件とTC-040の追加5件の計24件について、テスト用DBでの実行結果により全件OKである。</p>
+<p><strong>商用運用向け評価（学校課題の合否判定とは別）：</strong>TC-017で確認された公開設定ファイル内の平文データベース接続パスワードはNGのまま残す。是正後は、公開リポジトリの履歴を含めて秘密情報を再確認する。ブラウザ横断確認およびTC-041〜TC-045は未実施のまま残し、学校課題のStep 1〜4とは分けて継続評価する。</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script src="../js/main.js">
+</script>
+</body>
+</html>
