@@ -14,16 +14,14 @@ Set these environment variables in Render. Do not commit their values.
 
 | Variable | Value |
 | --- | --- |
-| `DB_URL` | JDBC URL for a reachable managed MySQL database, for example `jdbc:mysql://HOST:3306/DATABASE?useSSL=true&serverTimezone=Asia/Tokyo&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci` |
-| `DB_USERNAME` | Database username |
-| `DB_PASSWORD` | Database password |
+| `SPRING_PROFILES_ACTIVE` | `render` |
 | `STAFF_USERNAME` | Staff login username |
 | `STAFF_PASSWORD` | Staff login password |
 
-`spring.sql.init.mode=always` applies `schema.sql` on startup. The database user
-must be permitted to create or alter the application's tables. Use a managed
-MySQL service reachable from Render; a MySQL server running only on a developer
-PC cannot be reached by Render.
+The `render` profile uses an in-memory H2 database and applies
+`schema-render.sql` on startup. It is intended for the submission demo only;
+data is not persistent and no H2 console is exposed. Do not set the MySQL
+`DB_URL`, `DB_USERNAME`, or `DB_PASSWORD` variables for this profile.
 
 ## Verification
 
@@ -33,8 +31,7 @@ Run the following from the repository root before pushing:
 .\mvnw.cmd test
 docker build -t kousaku-render-test .
 docker run --rm -p 10000:10000 `
-  -e DB_URL="jdbc:mysql://HOST:3306/DATABASE?useSSL=true&serverTimezone=Asia/Tokyo" `
-  -e DB_USERNAME="..." -e DB_PASSWORD="..." `
+  -e SPRING_PROFILES_ACTIVE=render `
   -e STAFF_USERNAME="..." -e STAFF_PASSWORD="..." `
   kousaku-render-test
 ```
