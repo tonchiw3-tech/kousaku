@@ -18,7 +18,10 @@ CREATE TABLE IF NOT EXISTS reservations (
   PRIMARY KEY (id),
   CONSTRAINT uk_reservations_number UNIQUE (reservation_number),
   CONSTRAINT chk_participants CHECK (participants >= 1),
-  CONSTRAINT chk_visit_type CHECK (visit_type IN ('FIRST', 'REPEAT')),
+  -- FIRST/REPEAT are the normalized values written by ReservationService.
+  -- The Japanese values are retained only for reservations created by an
+  -- earlier Render build, so a status-only update can preserve those rows.
+  CONSTRAINT chk_visit_type CHECK (visit_type IN ('FIRST', 'REPEAT', '初めて', '2回目', '3回目以上')),
   CONSTRAINT chk_status CHECK (status IN ('RECEIVED', 'CONFIRMED', 'READY', 'COMPLETED', 'CANCELED'))
 );
 
