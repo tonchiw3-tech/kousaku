@@ -123,6 +123,8 @@ public class ReservationService {
         reservation.setEmail(request.email().trim());
         reservation.setAgeGroup(request.ageGroup());
         reservation.setVisitType(normalizeVisitType(request.visitType()));
+        reservation.setSource(trimToNull(request.source()));
+        reservation.setNote(trimToNull(request.note()));
         reservation.setUnitPrice(UNIT_PRICE);
         reservation.setTotalPrice(UNIT_PRICE.multiply(BigDecimal.valueOf(request.participants())));
         reservation.setStatus("RECEIVED");
@@ -142,5 +144,11 @@ public class ReservationService {
             case "REPEAT", "2回目", "3回目以上" -> "REPEAT";
             default -> throw new IllegalArgumentException("visitType is invalid");
         };
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) return null;
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

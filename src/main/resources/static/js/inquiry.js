@@ -29,7 +29,7 @@ form.addEventListener('submit', async event => {
 
     const saved = await response.json();
     form.hidden = true;
-    result.innerHTML = '<strong>お問い合わせを受け付けました。</strong><p>お問い合わせ番号：</p><code>' + saved.inquiryNumber + '</code><p>この番号は返信確認時に必要です。<br>大切に保管してください。</p><a class="button-link" href="/inquiries/status">返信を確認する</a>';
+    result.innerHTML = '<strong>お問い合わせを受け付けました。</strong><p>お問い合わせ番号：</p><code>' + saved.inquiryNumber + '</code><p>この番号は返信確認時に必要です。<br>大切に保管してください。</p><a class="button-link" href="/inquiries/status">返信を確認する</a><a class="button-link" href="/">TOPページへ戻る</a>';
     result.hidden = false;
   } catch (error) {
     console.error('お問い合わせAPIへの接続に失敗しました', error);

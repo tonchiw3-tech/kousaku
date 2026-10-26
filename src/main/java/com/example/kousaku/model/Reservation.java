@@ -15,6 +15,8 @@ public class Reservation {
     private String email;
     private String ageGroup;
     private String visitType;
+    private String source;
+    private String note;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private String status;
@@ -39,6 +41,10 @@ public class Reservation {
     public void setAgeGroup(String value) { this.ageGroup = value; }
     public String getVisitType() { return visitType; }
     public void setVisitType(String value) { this.visitType = value; }
+    public String getSource() { return source; }
+    public void setSource(String value) { this.source = value; }
+    public String getNote() { return note; }
+    public void setNote(String value) { this.note = value; }
     public BigDecimal getUnitPrice() { return unitPrice; }
     public void setUnitPrice(BigDecimal value) { this.unitPrice = value; }
     public BigDecimal getTotalPrice() { return totalPrice; }

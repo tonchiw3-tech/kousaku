@@ -67,6 +67,8 @@ class ReservationApiIntegrationTest {
         assertEquals(3, saved.getParticipants());
         assertEquals(new BigDecimal("16500"), saved.getTotalPrice());
         assertEquals("FIRST", saved.getVisitType());
+        assertEquals("Instagram", saved.getSource());
+        assertEquals("テスト用の備考", saved.getNote());
     }
 
     @Test
@@ -79,6 +81,8 @@ class ReservationApiIntegrationTest {
         mockMvc.perform(get("/api/staff/reservations/{id}", saved.getId()).with(user(STAFF_USERNAME).roles("STAFF")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.reservationNumber").value(saved.getReservationNumber()))
+            .andExpect(jsonPath("$.source").value("Instagram"))
+            .andExpect(jsonPath("$.note").value("テスト用の備考"))
             .andExpect(jsonPath("$.status").value("RECEIVED"));
     }
 
@@ -172,6 +176,11 @@ class ReservationApiIntegrationTest {
         mockMvc.perform(post("/api/reservations").contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson("not-an-email", 1)))
             .andExpect(status().isBadRequest());
+        int countBefore = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM reservations", Integer.class);
+        mockMvc.perform(post("/api/reservations").contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson("invalid@example", 1)))
+            .andExpect(status().isBadRequest());
+        assertEquals(countBefore, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM reservations", Integer.class));
     }
 
     @Test
@@ -243,6 +252,6 @@ class ReservationApiIntegrationTest {
     private String requestJson(String email, int participants) {
         return "{\"reservationDate\":\"" + LocalDate.of(2030, 1, 6) + "\",\"reservationTime\":\""
             + LocalTime.of(11, 0) + "\",\"participants\":" + participants + ",\"customerName\":\"Create Test\",\"email\":\""
-            + email + "\",\"ageGroup\":\"20代\",\"visitType\":\"FIRST\"}";
+            + email + "\",\"ageGroup\":\"20代\",\"visitType\":\"FIRST\",\"source\":\"Instagram\",\"note\":\"テスト用の備考\"}";
     }
 }

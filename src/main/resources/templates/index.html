@@ -10,10 +10,12 @@
 
 <body>
     <header class="site-header"><a href="#home" class="brand" data-screen="home">KOSAKU <small>INIMU</small></a>
-        <div class="header-note">inimu fragrance workshop</div>
+        <nav class="header-nav" aria-label="サイトナビゲーション">
+            <span class="header-note">inimu fragrance workshop</span>
+            <a class="staff-login" href="/inquiries">お問い合わせ</a>
+        </nav>
     </header>
     <main class="app-shell">
-        <p style="text-align:center"><a href="/inquiries">お問い合わせはこちら</a></p>
         <section id="home" class="screen active">
             <div class="hero-card">
                 <p class="eyebrow">INIMU / FRAGRANCE WORKSHOP</p>
@@ -77,7 +79,7 @@
                             <option>知人の紹介</option>
                             <option>その他</option>
                         </select></label><label class="full">備考<span class="optional">任意</span><textarea name="note"
-                            rows="4"></textarea></label></div><button class="primary-button"
+                            rows="4" maxlength="1000"></textarea></label></div><button class="primary-button"
                     type="submit">予約内容を確認する<span>→</span></button>
             </form>
         </section>
@@ -96,7 +98,7 @@
                 <div class="success-mark">✓</div>
                 <p class="eyebrow">RESERVATION COMPLETE</p>
                 <h1>ご予約を受け付けました</h1>
-                <p>ご入力いただいたメールアドレスへ予約内容をお送りします。</p><button class="primary-button" data-screen="home">トップへ戻る</button>
+                <p>予約内容はスタッフが確認後に対応します。</p><button class="primary-button" data-screen="home">トップへ戻る</button>
             </div>
         </section>
         <section id="admin" class="screen">

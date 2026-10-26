@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS reservations (
   email VARCHAR(254) NOT NULL,
   age_group VARCHAR(20) NOT NULL,
   visit_type VARCHAR(10) NOT NULL,
+  source VARCHAR(100) NULL,
+  note VARCHAR(1000) NULL,
   unit_price DECIMAL(10,0) NOT NULL,
   total_price DECIMAL(10,0) NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'RECEIVED',

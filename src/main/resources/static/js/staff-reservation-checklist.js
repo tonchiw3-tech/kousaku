@@ -37,7 +37,7 @@
     const status = value.status;
     const checks = [['CONFIRMED', 'READY', 'COMPLETED'].includes(status), ['READY', 'COMPLETED'].includes(status), status === 'COMPLETED'];
     document.querySelector('#current-status').textContent = labels[status] || status;
-    detail.innerHTML = `<div class="detail-field"><dt>予約番号</dt><dd>${escapeHtml(value.reservationNumber)}</dd></div><div class="detail-field"><dt>予約日</dt><dd>${escapeHtml(value.reservationDate)}</dd></div><div class="detail-field"><dt>お客様</dt><dd>${escapeHtml(value.customerName)}</dd></div><div class="detail-field"><dt>ステータス</dt><dd>${escapeHtml(labels[status] || status)}</dd></div>`;
+    detail.innerHTML = `<div class="detail-field"><dt>予約番号</dt><dd>${escapeHtml(value.reservationNumber)}</dd></div><div class="detail-field"><dt>予約日</dt><dd>${escapeHtml(value.reservationDate)}</dd></div><div class="detail-field"><dt>お客様</dt><dd>${escapeHtml(value.customerName)}</dd></div><div class="detail-field"><dt>知ったきっかけ</dt><dd>${escapeHtml(value.source)}</dd></div><div class="detail-field"><dt>備考</dt><dd>${escapeHtml(value.note)}</dd></div><div class="detail-field"><dt>ステータス</dt><dd>${escapeHtml(labels[status] || status)}</dd></div>`;
     document.querySelectorAll('.progress-checkbox').forEach((box, index) => {
       box.checked = checks[index];
       const disabled = busy || status === 'CANCELED' || (index === 1 && !checks[0]) || (index === 2 && (!checks[1] || future(value)));
