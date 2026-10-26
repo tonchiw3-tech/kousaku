@@ -6,13 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KOSAKU 香水づくり体験</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <style>
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        .return-link { color: var(--muted); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+        .return-link:hover, .return-link:focus-visible { color: var(--pink); }
+        @media (max-width: 720px) {
+            .header-actions { gap: 0; }
+        }
+    </style>
 </head>
 
 <body>
     <header class="site-header"><a href="#home" class="brand" data-screen="home">KOSAKU <small>INIMU</small></a>
-        <nav class="header-nav" aria-label="サイトナビゲーション">
+        <nav class="header-actions" aria-label="サイトナビゲーション">
             <span class="header-note">inimu fragrance workshop</span>
             <a class="staff-login" href="/inquiries">お問い合わせ</a>
+            <a class="return-link" href="https://tonchiw3-tech.github.io/washizu_2026.09.10/">旅香トップへ戻る</a>
         </nav>
     </header>
     <main class="app-shell">

@@ -1,36 +1,34 @@
 # KOSAKU - 香りづくり体験予約管理システム
 
-KOSAKUは、浅草の香りづくり体験を対象としたWeb予約管理アプリケーションです。WEB制作総合演習1で制作した「旅香 - TABIKA -」と連携する予約システムとして、WEB制作総合演習2で開発しました。
+## プロジェクト概要
 
-利用者はWeb上でワークショップを予約・問い合わせでき、スタッフは予約内容や対応状況を管理できます。
+KOSAKUは、Web制作総合演習1で企画・設計した「旅香 - TABIKA -」をもとに、Web制作総合演習2の卒業制作として開発した香りづくり体験の予約管理システムです。
+
+利用者向けにはワークショップの予約と問い合わせ、スタッフ向けには予約・問い合わせの確認や対応状況の管理機能を提供します。現時点では、旅香の企画をもとにした独立した予約管理アプリケーションであり、旅香との実際のシステム連携は実装していません。
+
+## 公開URL
+
+- Render公開URL: [https://kousaku.onrender.com/](https://kousaku.onrender.com/)
+- GitHubリポジトリ: [https://github.com/tonchiw3-tech/kousaku](https://github.com/tonchiw3-tech/kousaku)
 
 ## 主な機能
 
 ### 利用者向け
 
-- ワークショップの予約登録
-- 予約番号の自動発行、予約金額の自動計算
-- お問い合わせの登録
+- ワークショップ予約
+- 予約番号の発行
+- 参加人数に応じた料金計算
+- 問い合わせ登録
 - 問い合わせ番号による返信状況の確認
 
 ### スタッフ向け
 
 - スタッフログイン
-- 予約一覧・詳細の確認
-- 予約ステータスの変更、キャンセル、削除
-- 完了済み予約の訂正と訂正履歴の管理
-- 月間予約カレンダー、日別予約・準備状況の確認
-- お問い合わせの対応状況・返信内容の管理
-
-### 予約ステータス
-
-| ステータス | 内容 |
-| --- | --- |
-| `RECEIVED` | 予約受付 |
-| `CONFIRMED` | 予約確認 |
-| `READY` | 準備完了 |
-| `COMPLETED` | 体験完了 |
-| `CANCELED` | キャンセル |
+- 予約ステータス管理（受付・確認・準備完了・体験完了・キャンセル）
+- 予約のキャンセル・削除
+- 完了済み予約の訂正と訂正履歴管理
+- 月間カレンダーによる予約・準備状況の確認
+- 問い合わせの対応状況・返信内容の管理
 
 ## 使用技術
 
@@ -39,12 +37,15 @@ KOSAKUは、浅草の香りづくり体験を対象としたWeb予約管理ア�
 | 言語 | Java 21 |
 | フレームワーク | Spring Boot 4.0.8 |
 | データアクセス | MyBatis 4.0.1 |
-| データベース | MySQL 8.0 |
+| データベース（ローカル） | MySQL 8.0 |
+| データベース（Render提出用デモ） | H2 Database |
 | 画面テンプレート | Thymeleaf |
 | フロントエンド | HTML / CSS / JavaScript |
 | 認証・認可 | Spring Security |
 | テスト | JUnit 5 / Spring Boot Test / MockMvc |
 | コンテナ | Docker / Docker Compose |
+| バージョン管理 | Git / GitHub |
+| 公開環境 | Render Free |
 
 ## システム構成
 
@@ -53,22 +54,26 @@ KOSAKUは、浅草の香りづくり体験を対象としたWeb予約管理ア�
        ↓
    Webブラウザ
        ↓
-  Spring Boot
+Spring Boot Controller
        ↓
-Controller → Service → MyBatis Mapper → MySQL
+      Service
+       ↓
+ MyBatis Mapper
+       ↓
+    Database
 ```
 
-予約・問い合わせのリクエストをSpring Bootで処理し、MyBatisを介してMySQLに保存します。
+ローカル環境ではMySQL、Render環境では`render`プロファイルのインメモリH2を使用します。
 
 ## データベース構成
 
 | テーブル名 | 用途 |
 | --- | --- |
-| `reservations` | 予約情報 |
+| `reservations` | 予約情報、料金、予約ステータス |
 | `reservation_status_corrections` | 予約ステータスの訂正履歴 |
-| `inquiries` | 問い合わせ・返信状況 |
+| `inquiries` | 問い合わせ、対応状況、返信内容 |
 
-詳細な定義は [schema.sql](src/main/resources/schema.sql) を参照してください。
+ローカル環境の定義は [schema.sql](src/main/resources/schema.sql)、Render用H2の定義は [schema-render.sql](src/main/resources/schema-render.sql) を参照してください。
 
 ## 主なAPI
 
@@ -77,13 +82,18 @@ Controller → Service → MyBatis Mapper → MySQL
 | 予約登録 | `POST` | `/api/reservations` | 公開 |
 | 問い合わせ登録 | `POST` | `/api/inquiries` | 公開 |
 | 問い合わせ状況確認 | `GET` | `/api/inquiries/status?inquiryNumber={番号}` | 公開 |
-| 予約管理 | `GET` / `PATCH` / `DELETE` | `/api/staff/reservations/**` | スタッフ |
-| 予約カレンダー | `GET` | `/api/staff/calendar` | スタッフ |
-| 問い合わせ管理 | `GET` / `PATCH` | `/api/staff/inquiries/**` | スタッフ |
+| 予約一覧・詳細 | `GET` | `/api/staff/reservations` / `/api/staff/reservations/{id}` | スタッフ |
+| 予約ステータス変更 | `PATCH` | `/api/staff/reservations/{id}/status` | スタッフ |
+| 予約キャンセル | `PATCH` | `/api/staff/reservations/{id}/cancel` | スタッフ |
+| 予約削除 | `DELETE` | `/api/staff/reservations/{id}` | スタッフ |
+| 予約訂正 | `PATCH` | `/api/staff/reservations/{id}/correction` | スタッフ |
+| 月間カレンダー | `GET` | `/api/staff/calendar?year={年}&month={月}` | スタッフ |
+| 問い合わせ一覧・詳細 | `GET` | `/api/staff/inquiries` / `/api/staff/inquiries/{id}` | スタッフ |
+| 問い合わせ対応状況・返信 | `PATCH` | `/api/staff/inquiries/{id}/status` / `/reply` | スタッフ |
 
-スタッフ用APIおよび画面は、Spring Securityで`STAFF`ロールに制限しています。
+スタッフ用APIと画面はSpring Securityで保護しています。ログイン用の実際のID・パスワードはセキュリティ上READMEには掲載しません。
 
-## ローカル環境での起動
+## ローカル環境での起動方法
 
 ### 前提条件
 
@@ -91,108 +101,80 @@ Controller → Service → MyBatis Mapper → MySQL
 - Docker Desktop
 - Git
 
-### 1. リポジトリを取得
-
 ```bash
 git clone https://github.com/tonchiw3-tech/kousaku.git
 cd kousaku
 ```
 
-### 2. 環境変数を設定
-
-`.env.example`を参考に、プロジェクト直下に`.env`を作成します。パスワードなどの機密情報はGitへコミットしないでください。
-
-```dotenv
-DB_URL=jdbc:mysql://localhost:3306/kousaku?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Tokyo
-DB_USERNAME=your_mysql_user
-DB_PASSWORD=your_mysql_password
-STAFF_USERNAME=staff_user
-STAFF_PASSWORD=staff_password
-
-MYSQL_DATABASE=kousaku
-MYSQL_USER=your_mysql_user
-MYSQL_PASSWORD=your_mysql_password
-MYSQL_ROOT_PASSWORD=your_mysql_root_password
-```
-
-`DB_USERNAME` / `DB_PASSWORD` は、Docker Composeの `MYSQL_USER` / `MYSQL_PASSWORD` と同じ値を設定してください。
-
-### 3. データベースを起動
+`.env.example`を参考に`.env`を作成し、データベース接続情報とスタッフ認証情報を設定してください。`.env`はGitへコミットしないでください。
 
 ```bash
 docker compose up -d
 ```
 
-アプリケーション起動時に `schema.sql` が実行され、必要なテーブルが作成されます。
-
-### 4. Spring Bootを起動
-
-Windowsの場合:
+Windowsでは次のコマンドで起動します。
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-macOS / Linuxの場合:
+macOS / Linuxでは次のコマンドを使用します。
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### 5. ブラウザで確認
-
-- 利用者向け予約画面: <http://localhost:8080>
+- 利用者向け画面: <http://localhost:8080>
 - スタッフ用予約管理画面: <http://localhost:8080/staff/reservations>
 
-## テスト
+## Renderへのデプロイ
 
-JUnitによる単体テスト・結合テストを用意しています。
+Dockerfileを使用するWeb ServiceとしてRenderにデプロイします。`SPRING_PROFILES_ACTIVE=render`を設定すると、Render用H2プロファイルが有効になります。スタッフ認証情報はRenderの環境変数に設定し、READMEやGitHubには記載しません。
 
-```powershell
-.\mvnw.cmd test
-```
+Renderへのデプロイは成功しており、ステータスはLiveです。確認対象のコミットは`7b48fba`、公開URLは[https://kousaku.onrender.com/](https://kousaku.onrender.com/)です。
 
-テストでは専用データベース `kousaku_test` を使用します。テスト用接続設定は [src/test/resources/application.properties](src/test/resources/application.properties) を参照してください。
+Render Freeにはスリープがあり、インメモリH2のデータは再起動時に初期化されます。そのため、公開環境は提出用デモであり、永続運用を目的とした本番環境ではありません。
 
-### 最新テスト実行結果
+## テスト結果
 
-- JUnitテスト24件、成功24件、失敗0件、エラー0件、スキップ0件（既存19件＋TC-040追加5件）
-- BUILD SUCCESS
+### Maven / JUnit
 
-### 実装上の注意
+最新のSurefire実行記録では、JUnitテスト29件が全件成功しました。
 
+- 成功: 29件
+- 失敗: 0件
+- エラー: 0件
+- スキップ: 0件
+- `ReservationServiceTest`: 6件成功
+- Mavenパッケージ作成: 成功（`BUILD SUCCESS`）
+
+### Render用H2プロファイル・HTTP確認
+
+- H2プロファイルでの起動成功
+- トップ画面: HTTP 200
+- 予約登録: HTTP 201
+- 問い合わせ登録: HTTP 201
+- 未認証でのスタッフ画面アクセス: HTTP 302
+
+## 実装上の注意
+
+- Render環境は提出用デモのため、H2のデータは再起動時に初期化されます。
+- Render Freeのスリープ後は、初回アクセスに時間がかかる場合があります。
 - 祝日判定は未実装です。予約可能日の判定は土曜日・日曜日を対象としています。
+- `.env`、データベースのパスワード、スタッフログイン情報は公開しません。
+- 旅香との実際のデータ連携・システム連携は未実装です。
 
 ## 関連プロジェクト・設計資料
 
-WEB制作総合演習1・2の設計資料は、別リポジトリ「旅香 - TABIKA -」で管理しています。
-
-- [旅香 - TABIKA - リポジトリ](https://github.com/tonchiw3-tech/washizu_2026.09.10)
-- 制作資料: 企画提案書 / マーケットリサーチ / ペルソナ / サイトマップ / ワイヤーフレーム / デザインガイドライン / 仕様書 / DB設計書 / テスト報告書
-
-## デプロイ
-
-Dockerfileと`.dockerignore`を用意し、Renderへの公開に対応する構成です。本番用MySQLの接続設定と公開動作確認は進行中です。
-
-## 制作について
-
-本アプリケーションは、職業訓練の「WEB制作総合演習2」における卒業制作です。演習1で作成した企画・設計資料をもとに、AI開発支援ツールも活用しながら、Java / Spring Bootによるバックエンド実装、MySQLによるデータ管理、JUnitによるテストに取り組んでいます。
-
-- 開発形態: 職業訓練 卒業制作
-- 関連プロジェクト: 旅香 - TABIKA -
-- GitHub: <https://github.com/tonchiw3-tech/kousaku>
-
-> 本プロジェクトは学習・卒業制作を目的としたアプリケーションです。実際の店舗予約サービスとしての運用を保証するものではありません。
-## Web制作総合演習2の設計資料
-
-以下の資料は、Web制作総合演習1の制作資料をもとに作成しました。
+本システムは、Web制作総合演習1で企画した「旅香 - TABIKA -」の企画・設計をもとにしています。KOSAKU内の設計資料は次のとおりです。
 
 - [仕様書](documents/docs/07-specification.html)
 - [DB設計書](documents/docs/08-db-design.html)
-- [テスト報告書 Ver 1.6](documents/docs/09-test-report.html)
+- [テスト報告書](documents/docs/09-test-report.html)
+- Render設定メモ: [RENDER_DEPLOY.md](RENDER_DEPLOY.md)
 
-JUnitテスト24件すべて成功（既存19件＋TC-040追加5件）
+## 制作について
 
-## Renderでの公開状況
+本アプリケーションは、職業訓練のWeb制作総合演習2における卒業制作です。Web制作総合演習1で企画した体験サービスを題材に、Java / Spring BootによるWebアプリケーション、MyBatisによるデータアクセス、Spring Securityによる認証・認可、MySQL・H2を使った環境分離、JUnitによるテスト、Dockerによるデプロイ構成を学習・実装しました。
 
-Renderでの公開は未実施です。
+本プロジェクトは学習・卒業制作を目的としたアプリケーションであり、実際の店舗予約サービスとしての運用を保証するものではありません。
